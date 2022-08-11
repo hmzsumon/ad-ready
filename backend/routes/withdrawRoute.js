@@ -18,7 +18,7 @@ const {
 const router = express.Router();
 
 // create withdraw request
-router.route('/withdraw').post(isAuthenticatedUser, withdrawRequest);
+router.route('/withdraw/request').post(isAuthenticatedUser, withdrawRequest);
 
 // get withdraws by agentId
 router.route('/agent/withdraws').get(isAuthenticatedUser, getAgentWithdraws);

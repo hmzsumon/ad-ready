@@ -1,50 +1,41 @@
 const ErrorHandler = require('../utils/errorHandler');
 const asyncErrorHandler = require('../middlewares/asyncErrorHandler');
-const Deposit = require('../models/depositModel');
 const User = require('../models/userModel');
-const Transaction = require('../models/transactionModel');
 const Withdraw = require('../models/WithdrawModel');
+const Admin = require('../models/Admin');
 const createTransaction = require('../utils/tnx');
-
-const companyId = process.env.COMPANY_ID;
+const adminId = process.env.ADMIN_ID;
 
 // withdraw request from user
 module.exports.withdrawRequest = asyncErrorHandler(async (req, res, next) => {
   const userId = req.user._id;
+  const { amount, method, accountNumber } = req.body;
 
   const user = await User.findById(userId);
   if (!user) {
     return next(new ErrorHandler('User not found', 404));
   }
 
-  // // check user active date
-  // const today = new Date();
-  // const userActiveDate = new Date(user.activeDate);
-  // const diff = today.getTime() - userActiveDate.getTime();
-  // const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  // if (days < 15) {
-  //   return next(
-  //     new ErrorHandler('User must be active for at least 15 days', 400)
-  //   );
-  // }
-
-  const { amount, method, accountNumber } = req.body;
-
-  const withdrawCharge = Number(amount) * 0.1;
-
-  const netAmount = Number(amount) - withdrawCharge;
-  const totalAmount = netAmount + withdrawCharge;
-
   // check if user has sufficient balance
-  if (user.incomeBalance < amount) {
+  if (user.activeBalance < amount) {
     return next(new ErrorHandler('Insufficient balance', 400));
   }
+
+  // find admin by adminId
+  const admin = await Admin.findById(adminId);
+
+  const numAmount = Number(amount);
+
+  const withdrawCharge = numAmount * admin.withdrawCharge;
+
+  const netAmount = numAmount - withdrawCharge;
+  const totalAmount = netAmount + withdrawCharge;
 
   // create withdraw request
   const withdraw = await Withdraw.create({
     userId,
-    userName: user.userName,
-    userFullName: user.fullName,
+    username: user.username,
+    name: user.name,
     accountNumber,
     amount,
     withdrawCharge,
@@ -52,10 +43,21 @@ module.exports.withdrawRequest = asyncErrorHandler(async (req, res, next) => {
     totalAmount,
     method,
     status: 'pending',
+    numberOfWithdraw: user.withdraw.numberOfWithdraw + 1,
   });
   // update user balance
-  user.incomeBalance -= amount;
-  user.save();
+  user.activeBalance -= numAmount;
+  createTransaction(userId, 'cashOut', numAmount, 'withdraw request');
+  user.withdraw.numberOfWithdraw += 1;
+  user.withdraw.total += numAmount;
+  user.withdraw.lastWithdraw = numAmount;
+  //user.status = 'suspended';
+  await user.save();
+
+  //update admin withdraw
+  admin.totalPendingWithdraw.amount += numAmount;
+  admin.totalPendingWithdraw.count += 1;
+  await admin.save();
 
   res.status(201).json({
     success: true,

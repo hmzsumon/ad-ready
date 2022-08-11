@@ -1,4 +1,5 @@
 const ErrorHandler = require('../utils/errorHandler');
+
 const asyncErrorHandler = require('../middlewares/asyncErrorHandler');
 const Deposit = require('../models/depositModel');
 const User = require('../models/userModel');

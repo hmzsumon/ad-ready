@@ -4,7 +4,7 @@ const sendToken = require('../utils/sendToken');
 const ErrorHandler = require('../utils/errorHandler');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
-const cloudinary = require('cloudinary');
+
 const Admin = require('../models/Admin');
 const createTransaction = require('../utils/tnx');
 
@@ -126,7 +126,6 @@ exports.verifyUser = asyncErrorHandler(async (req, res, next) => {
 
 exports.loginUser = asyncErrorHandler(async (req, res, next) => {
   const { username, password, phone } = req.body;
-  console.log(username, password, phone);
   if (!username || !password) {
     return next(new ErrorHandler('Please Enter User Name And Password', 400));
   }
@@ -259,25 +258,6 @@ exports.updateProfile = asyncErrorHandler(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
   };
-
-  if (req.body.avatar !== '') {
-    const user = await User.findById(req.user.id);
-
-    const imageId = user.avatar.public_id;
-
-    await cloudinary.v2.uploader.destroy(imageId);
-
-    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-      folder: 'avatars',
-      width: 150,
-      crop: 'scale',
-    });
-
-    newUserData.avatar = {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
-    };
-  }
 
   await User.findByIdAndUpdate(req.user.id, newUserData, {
     new: true,

@@ -1,6 +1,16 @@
-import React from 'react';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import React, { useEffect } from 'react';
 import { FaRegCopy } from 'react-icons/fa';
-import { NavLink } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { clearErrors, withdrawRequest } from '../../../actions/withdrawAction';
+
+import { useSnackbar } from 'notistack';
 
 import BackdropLoader from '../../Layouts/BackdropLoader';
 
@@ -67,13 +77,44 @@ const depositMethods = [
   },
 ];
 const Withdraw = () => {
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [method, setMethod] = React.useState(null);
   const [amount, setAmount] = React.useState(0);
   const [errors, setErrors] = React.useState({});
   const [tnxId, setTnxId] = React.useState('');
   const [userNumber, setUserNumber] = React.useState('');
 
-  const [loading] = React.useState(false);
+  //==================Start Dialog Section =================
+  const [open, setOpen] = React.useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleDisAgree = () => {
+    setOpen(false);
+    navigate('/dashboard');
+  };
+  //==================End Dialog Section =================
+
+  const { user } = useSelector((state) => state.user);
+
+  const { loading, isCreated, error, message } = useSelector(
+    (state) => state.withdraw
+  );
+
+  useEffect(() => {
+    if (error) {
+      enqueueSnackbar(error, { variant: 'error' });
+      dispatch(clearErrors());
+    }
+
+    if (isCreated) {
+      enqueueSnackbar(message, { variant: 'success' });
+      navigate('/dashboard');
+    }
+  }, [error, isCreated, message, enqueueSnackbar, dispatch, navigate]);
 
   // handle select method
   const handleSelectMethod = (method) => {
@@ -92,13 +133,11 @@ const Withdraw = () => {
     myForm.set('method', method.value);
     myForm.set('amount', amount);
     myForm.set('accountNumber', userNumber);
-    myForm.set('transactionId', tnxId);
-    myForm.set('bdtAmount', amount * 85);
 
     for (let key of myForm.entries()) {
       console.log(key[0] + ', ' + key[1]);
     }
-    // dispatch(depositRequest(myForm));
+    dispatch(withdrawRequest(myForm));
   };
 
   // validate amount
@@ -107,15 +146,18 @@ const Withdraw = () => {
     if (!amount) {
       errors.amount = 'Amount Required';
     }
-    // if (values.amount <= 10) {
-    //   errors.amount = 'Amount must be greater than 10 or equal to 10';
-    // }
-    // if (!values.method) {
-    //   errors.method = 'Method Required';
-    // }
-    // console.log(errors);
     return errors;
   };
+
+  // check user workingdays
+  useEffect(() => {
+    if (user.totalWorkDays < 30) {
+      console.log('user working days less than 30');
+      setOpen(true);
+      return;
+    }
+  }, [user.totalWorkDays]);
+
   return (
     <>
       {!method ? (
@@ -127,6 +169,7 @@ const Withdraw = () => {
           >
             Withdraw History
           </NavLink>
+
           <div className='w-full lg:w-6/12 '>
             <div className='relative w-full mb-3'>
               <label
@@ -169,6 +212,36 @@ const Withdraw = () => {
               );
             })}
           </div>
+          {/* Start Dialog Section */}
+          <div>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby='alert-dialog-title'
+              aria-describedby='alert-dialog-description'
+            >
+              <DialogTitle id='alert-dialog-title'>
+                <span className='text-red-500'>
+                  Your working days are less than 30 days!
+                </span>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id='alert-dialog-description'>
+                  If you want to withdraw now then you can withdraw only the
+                  active balance in this case 10% charge is applicable, and your
+                  account will be terminated. After 30 days you can withdraw
+                  active balance with the profit.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleDisAgree}>Disagree</Button>
+                <Button onClick={handleClose} autoFocus>
+                  Agree
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </div>
+          {/* End Dialog Section */}
         </div>
       ) : (
         <>

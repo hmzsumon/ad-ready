@@ -13,7 +13,8 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const referCode = useLocation().search.split('=')[1];
+  const referCode =
+    useLocation().search.split('=')[1] || '62f1924c12a8d2693e60a2e1';
 
   const { loading, isAuthenticated, error } = useSelector(
     (state) => state.user

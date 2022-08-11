@@ -1,7 +1,10 @@
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import AddCardIcon from '@mui/icons-material/AddCard';
 import CloseIcon from '@mui/icons-material/Close';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
 import LogoutIcon from '@mui/icons-material/Logout';
+import PublishIcon from '@mui/icons-material/Publish';
+import ShareIcon from '@mui/icons-material/Share';
 import StorageIcon from '@mui/icons-material/Storage';
 import Avatar from '@mui/material/Avatar';
 import { useSnackbar } from 'notistack';
@@ -22,16 +25,26 @@ const navMenu = [
     label: 'Tasks',
     ref: '/user/tasks',
   },
+
   {
-    icon: <AccountBoxIcon />,
+    icon: <AddCardIcon />,
     label: 'Deposit',
     ref: '/user/deposit',
   },
-
+  {
+    icon: <PublishIcon />,
+    label: 'Withdraw',
+    ref: '/user/withdraw',
+  },
   {
     icon: <AccountBoxIcon />,
     label: 'My Profile',
     ref: '/account',
+  },
+  {
+    icon: <ShareIcon />,
+    label: 'Referral',
+    ref: '/referral',
   },
   {
     icon: <LogoutIcon />,
@@ -59,6 +72,13 @@ const SidebarMobile = ({ activeTab, setToggleSidebar }) => {
         <div className='flex flex-col gap-0'>
           <span className='font-medium text-lg'>{user.name}</span>
           <span className='text-gray-300 text-sm'>{user.email}</span>
+          <span
+            className={` text-sm capitalize ${
+              user.status === 'active' ? 'text-green-500' : 'text-red-500'
+            }`}
+          >
+            {user.status}
+          </span>
         </div>
         <button
           onClick={() => setToggleSidebar(false)}

@@ -13,6 +13,8 @@ import {
   verifyUserReducer,
 } from './reducers/userReducer';
 
+import { withdrawReducer } from './reducers/withdrawReducer';
+
 import { depositReducer } from './reducers/depositReducer';
 
 const reducer = combineReducers({
@@ -26,6 +28,8 @@ const reducer = combineReducers({
   userActivate: userActivateReducer,
 
   deposit: depositReducer,
+
+  withdraw: withdrawReducer,
 });
 
 let initialState = {};

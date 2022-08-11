@@ -8,11 +8,11 @@ const WithdrawSchema = new Schema(
       ref: 'User',
       required: true,
     },
-    userName: {
+    username: {
       type: String,
       required: true,
     },
-    userFullName: {
+    name: {
       type: String,
       required: true,
     },
@@ -20,16 +20,7 @@ const WithdrawSchema = new Schema(
       type: String,
       required: true,
     },
-    agentId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
-    agentName: {
-      type: String,
-    },
-    agentContact: {
-      type: String,
-    },
+
     amount: {
       type: Number,
       required: true,
