@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaRegCopy } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
 import BackdropLoader from '../../Layouts/BackdropLoader';
@@ -68,14 +67,13 @@ const depositMethods = [
   },
 ];
 const Withdraw = () => {
-  const dispatch = useDispatch();
   const [method, setMethod] = React.useState(null);
   const [amount, setAmount] = React.useState(0);
   const [errors, setErrors] = React.useState({});
   const [tnxId, setTnxId] = React.useState('');
   const [userNumber, setUserNumber] = React.useState('');
 
-  const [loading, setLoading] = React.useState(false);
+  const [loading] = React.useState(false);
 
   // handle select method
   const handleSelectMethod = (method) => {

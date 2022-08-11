@@ -9,7 +9,7 @@ import SidebarMobile from './Sidebar/SidebarMobile';
 const Dashboard = ({ activeTab, children }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [onMobile, setOnMobile] = useState(false);
+  const [, setOnMobile] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
 
   const { user } = useSelector((state) => state.user);

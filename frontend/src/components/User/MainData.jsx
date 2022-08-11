@@ -31,7 +31,7 @@ const MainData = () => {
   // for dilog
   const [open, setOpen] = useState(false);
   const [taskLimit, setTaskLimit] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);

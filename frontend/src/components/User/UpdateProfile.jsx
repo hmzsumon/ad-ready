@@ -20,8 +20,6 @@ const UpdateProfile = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [gender, setGender] = useState('');
-  const [avatar, setAvatar] = useState('');
-  const [avatarPreview, setAvatarPreview] = useState('');
 
   const updateProfileHandler = (e) => {
     e.preventDefault();
@@ -30,22 +28,8 @@ const UpdateProfile = () => {
     formData.set('name', name);
     formData.set('email', email);
     formData.set('gender', gender);
-    formData.set('avatar', avatar);
 
     dispatch(updateProfile(formData));
-  };
-
-  const handleUpdateDataChange = (e) => {
-    const reader = new FileReader();
-    setAvatar('');
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setAvatarPreview(reader.result);
-        setAvatar(reader.result);
-      }
-    };
-
-    reader.readAsDataURL(e.target.files[0]);
   };
 
   useEffect(() => {
