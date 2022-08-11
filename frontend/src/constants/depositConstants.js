@@ -1,0 +1,6 @@
+export const DEPOSIT_REQUEST = 'DEPOSIT_REQUEST';
+export const DEPOSIT_SUCCESS = 'DEPOSIT_SUCCESS';
+export const DEPOSIT_FAIL = 'DEPOSIT_FAIL';
+
+export const DEPOSIT_RESET = 'DEPOSIT_RESET';
+export const CLEAR_ERRORS = 'CLEAR_ERRORS';
