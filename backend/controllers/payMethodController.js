@@ -1,4 +1,4 @@
-const ErrorHandler = require('../utils/errorhandler');
+const ErrorHandler = require('../utils/errorHandler');
 const asyncErrorHandler = require('../middlewares/asyncErrorHandler');
 const PayMethod = require('../models/payMethodModel');
 

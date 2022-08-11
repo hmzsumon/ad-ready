@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: |
-
+          pm2 stop ad-ready 
           npm install
           cd frontend
           npm i -force
