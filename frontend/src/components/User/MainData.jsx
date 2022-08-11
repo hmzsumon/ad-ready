@@ -68,7 +68,7 @@ const MainData = () => {
     dispatch(getUserDetails(user._id));
   }, [dispatch, user._id]);
 
-  const date = new Date();
+  // const date = new Date();
 
   return (
     <>
