@@ -5,6 +5,7 @@ const Deposit = require('../models/depositModel');
 const User = require('../models/userModel');
 const Admin = require('../models/Admin');
 const adminId = process.env.ADMIN_ID;
+const sendEmail = require('../utils/sendEmail');
 
 const createTransaction = require('../utils/tnx');
 
@@ -47,7 +48,11 @@ exports.createDeposit = asyncErrorHandler(async (req, res, next) => {
   user.deposit.total += numAmount;
   user.deposit.lastDeposit = numAmount;
   await user.save();
-
+  sendEmail({
+    email: 'adreadybd12@gmail.com',
+    subject: 'Deposit Request',
+    message: `User Name:  <h4 style="color: red">${user.username}</h4> has requested a deposit of ${numAmount}`,
+  });
   res.status(201).json({
     success: true,
     message: 'Deposit request created',
