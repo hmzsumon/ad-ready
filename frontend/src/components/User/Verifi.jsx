@@ -6,7 +6,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { clearErrors, verifyUser } from '../../actions/userAction';
 import BackdropLoader from '../Layouts/BackdropLoader';
 import MetaData from '../Layouts/MetaData';
-import FormSidebar from './FormSidebar';
 
 const Verify = () => {
   const dispatch = useDispatch();
@@ -49,17 +48,24 @@ const Verify = () => {
       {loading && <BackdropLoader />}
       <main className='w-full mt-12 sm:pt-20 sm:mt-0'>
         {/* <!-- row --> */}
-        <div className='flex sm:w-4/6 sm:mt-4 m-auto mb-7 bg-white shadow-lg'>
-          <FormSidebar
+        <div className='flex  sm:w-4/6 sm:mt-4 m-auto mb-7 bg-white shadow-lg'>
+          {/* <FormSidebar
             title='Please verify your account?'
             tag='We have sent you a verification code to your Phone No .'
-          />
+          /> */}
 
           {/* <!-- login column --> */}
           <div className='flex-1 overflow-hidden'>
             <h2 className='text-center text-2xl font-medium mt-6 text-gray-800'>
               Please verify your account.
             </h2>
+
+            <div className='px-6'>
+              <p className='text-center text-sm'>
+                We have sent a verification code to your email, please check
+                your email inbox or spam box
+              </p>
+            </div>
 
             {/* <!-- edit info container --> */}
             <div className='text-center py-10 px-4 sm:px-14'>
