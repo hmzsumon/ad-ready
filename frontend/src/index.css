@@ -22,3 +22,10 @@ body {
   background-repeat: no-repeat;
 }
 /* login signup sidebar bg image */
+
+/* media quary for loginSidebar */
+@media screen and (max-width: 768px) {
+  .loginSidebar {
+    background-image: none;
+  }
+}

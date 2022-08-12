@@ -42,9 +42,9 @@ const MainData = () => {
 
   // handle confirm
   const handleConfirm = () => {
-    if (user.mainBalance <= 0) {
-      enqueueSnackbar('You have no balance to transfer', {
-        variant: 'error',
+    if (user.mainBalance <= 2999) {
+      enqueueSnackbar('Insufficient balance to activate your account!', {
+        variant: 'warning',
       });
       return;
     }
@@ -81,12 +81,13 @@ const MainData = () => {
             <h4 className='text-gray-100 text-center font-medium'>
               Your Account Inactive
             </h4>
+            <small>Deposit a minimum of BDT 3000 to activate the account</small>
             <div className='  text-center'>
               <div className=' mx-auto'>
                 <Button
                   variant='contained'
                   onClick={handleClickOpen}
-                  disabled={user.mainBalance <= 0}
+                  disabled={user.mainBalance <= 2999}
                 >
                   Active
                 </Button>
@@ -107,7 +108,7 @@ const MainData = () => {
         </div>
         <div className='flex flex-col bg-red-500 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
           <h4 className='text-gray-100 font-medium'>
-            Active Balance <sup>2%+</sup>
+            Active Balance <sup>3%+</sup>
           </h4>
           <div className=' flex items-center'>
             <span>
@@ -132,7 +133,7 @@ const MainData = () => {
           </div>
         </div>
         <div className='flex flex-col bg-green-500 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
-          <h4 className='text-gray-100 font-medium'>Your Profit</h4>
+          <h4 className='text-gray-100 font-medium'>Your Total Profit</h4>
 
           <div className=' flex items-center'>
             <span>
@@ -173,6 +174,21 @@ const MainData = () => {
           </div>
         </div>
         {/* End Daily vew */}
+
+        {/* Start Daily Profit */}
+        <div className='flex flex-col bg-yellow-600 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
+          <h4 className='text-gray-100 font-medium'>To Day Profit</h4>
+
+          <div className=' flex items-center'>
+            <span>
+              <TbCurrencyTaka className=' text-2xl' />
+            </span>
+            <h2 className='text-2xl font-bold'>
+              {user && Number(user.toDayProfit).toFixed(2)}{' '}
+            </h2>
+          </div>
+        </div>
+        {/* End Daily Profit */}
       </div>
       {/* Model Section */}
       <Dialog open={open} onClose={handleClose}>

@@ -25,6 +25,7 @@ const deposit = require('./routes/depositRoute');
 const withdraw = require('./routes/withdrawRoute');
 const payMethod = require('./routes/payMethodRoute');
 const dailyWork = require('./routes/dailyWorkRoute');
+const tnx = require('./routes/tnxRoute');
 
 app.use('/api/v1', user);
 app.use('/api/v1', admin);
@@ -32,6 +33,7 @@ app.use('/api/v1', deposit);
 app.use('/api/v1', withdraw);
 app.use('/api/v1', payMethod);
 app.use('/api/v1', dailyWork);
+app.use('/api/v1', tnx);
 
 // deployment
 __dirname = path.resolve();

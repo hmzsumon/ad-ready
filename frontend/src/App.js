@@ -16,6 +16,7 @@ import Register from './components/User/Register';
 import NoTask from './components/User/Task/NoTask';
 import Submit from './components/User/Task/Submit';
 import Task from './components/User/Task/Task';
+import Transactions from './components/User/Tnx';
 import UpdatePassword from './components/User/UpdatePassword';
 import UpdateProfile from './components/User/UpdateProfile';
 import Verify from './components/User/Verifi';
@@ -73,7 +74,6 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
-
         <Route
           path='/user/tasks'
           element={
@@ -84,7 +84,6 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
-
         <Route
           path='/submit/task/:id'
           element={
@@ -95,7 +94,6 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
-
         <Route
           path='/user/deposit'
           element={
@@ -106,7 +104,6 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
-
         <Route
           path='/user/withdraw'
           element={
@@ -117,7 +114,6 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
-
         <Route
           path='/account'
           element={
@@ -128,7 +124,6 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
-
         <Route
           path='/account/update'
           element={
@@ -139,7 +134,6 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
-
         <Route
           path='/password/update'
           element={
@@ -148,7 +142,16 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
-
+        <Route
+          path='/transactions'
+          element={
+            <ProtectedRoute>
+              <Dashboard activeTab={5}>
+                <Transactions />
+              </Dashboard>
+            </ProtectedRoute>
+          }
+        ></Route>
         <Route
           path='/referral'
           element={
@@ -170,7 +173,6 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
-
         <Route path='*' element={<NotFound />}></Route>
       </Routes>
     </>

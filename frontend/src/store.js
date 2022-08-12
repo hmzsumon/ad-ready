@@ -17,6 +17,11 @@ import { withdrawReducer } from './reducers/withdrawReducer';
 
 import { depositReducer } from './reducers/depositReducer';
 
+import {
+  allTransactionsReducer,
+  transactionReducer,
+} from './reducers/tnxReducer';
+
 const reducer = combineReducers({
   user: userReducer,
   profile: profileReducer,
@@ -30,6 +35,8 @@ const reducer = combineReducers({
   deposit: depositReducer,
 
   withdraw: withdrawReducer,
+  tnx: allTransactionsReducer,
+  transaction: transactionReducer,
 });
 
 let initialState = {};

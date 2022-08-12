@@ -107,15 +107,15 @@ export const getPaymentStatus = (id) => async (dispatch) => {
 };
 
 // Get All Orders ---ADMIN
-export const getAllOrders = () => async (dispatch) => {
+export const getAllTransactions = () => async (dispatch) => {
   try {
     dispatch({ type: ALL_ORDERS_REQUEST });
 
-    const { data } = await axios.get('/api/v1/admin/orders');
+    const { data } = await axios.get('/api/v1/user/transactions');
 
     dispatch({
       type: ALL_ORDERS_SUCCESS,
-      payload: data.orders,
+      payload: data.transactions,
     });
   } catch (error) {
     dispatch({

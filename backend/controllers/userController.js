@@ -4,10 +4,8 @@ const sendToken = require('../utils/sendToken');
 const ErrorHandler = require('../utils/errorHandler');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
-
 const Admin = require('../models/Admin');
 const createTransaction = require('../utils/tnx');
-
 const adminId = process.env.ADMIN_ID;
 
 // test sendEmail
@@ -125,15 +123,13 @@ exports.verifyUser = asyncErrorHandler(async (req, res, next) => {
 // ===============================================================
 
 exports.loginUser = asyncErrorHandler(async (req, res, next) => {
-  const { username, password, phone } = req.body;
+  const { username, password } = req.body;
   if (!username || !password) {
     return next(new ErrorHandler('Please Enter User Name And Password', 400));
   }
 
   //find user by username or phone
-  const user = await User.findOne({
-    $or: [{ username }, { phone }],
-  }).select('+password');
+  const user = await User.findOne({ username }).select('+password');
 
   if (!user) {
     return next(new ErrorHandler('Invalid User Name or Password', 401));
@@ -394,10 +390,10 @@ exports.getAllUsers2 = asyncErrorHandler(async (req, res, next) => {
 //===========================================================================
 //===================== inactive user to active user =========================
 exports.inactiveUserToActiveUser = asyncErrorHandler(async (req, res, next) => {
-  const { taskLimit } = req.body;
+  const taskLimit = req.body.taskLimit ? req.body.taskLimit : 5;
   const numTaskLimit = Number(taskLimit);
-  const user = await User.findById(req.user._id);
 
+  const user = await User.findById(req.user._id);
   if (!user) {
     return next(
       new ErrorHandler(`User doesn't exist with id: ${req.user._id}`, 404)
@@ -406,47 +402,41 @@ exports.inactiveUserToActiveUser = asyncErrorHandler(async (req, res, next) => {
 
   // find admin by adminId
   const admin = await Admin.findById(adminId);
+  console.log(adminId);
+  if (!admin) {
+    return next(new ErrorHandler('Admin not found', 404));
+  }
+  const cashBack = user.mainBalance * admin.cashBackPercentage;
+
+  user.status = 'active';
+  user.isActive = true;
+  user.activeDate = new Date();
+  user.cashBack += cashBack;
+  createTransaction(user._id, 'cashIn', cashBack, `CashBack`);
+  user.activeBalance += user.mainBalance + cashBack;
+  createTransaction(
+    user._id,
+    'cashIn',
+    user.mainBalance + user.cashBack,
+    `Active to ActiveBalance`
+  );
 
   // task value
   const dailyProfit = user.mainBalance * admin.dailyProfit;
   const taskValue = dailyProfit / numTaskLimit;
 
-  user.status = 'active';
-  user.isActive = true;
-  user.activeDate = new Date();
-  user.activeBalance = user.mainBalance;
-  createTransaction(
-    user._id,
-    'cashIn',
-    user.mainBalance,
-    `Active to ActiveBalance`
-  );
-  user.mainBalance -= user.mainBalance;
-  createTransaction(
-    user._id,
-    'cashOut',
-    user.mainBalance,
-    `Ad to ActiveBalance`
-  );
-
-  user.cashBack += user.activeBalance * admin.cashBackPercentage;
-  createTransaction(
-    user._id,
-    'cashIn',
-    user.activeBalance * admin.cashBackPercentage,
-    `CashBack`
-  );
-  user.profit += user.activeBalance * admin.cashBackPercentage;
-  user.taskLimit = taskLimit;
+  user.profit += cashBack;
+  user.dailyProfit = dailyProfit;
+  user.toDayProfit += cashBack;
+  user.taskLimit = numTaskLimit;
   user.dailyTaskLimit = numTaskLimit;
   user.taskValue = taskValue;
-  user.dailyProfit = dailyProfit;
-  user.withdrawBalance += user.activeBalance;
+  user.withdrawBalance += user.mainBalance;
   await user.save();
 
   // find sponsor by sponsorId
 
-  const referBonus = user.activeBalance * admin.referPercentage;
+  const referBonus = user.mainBalance * admin.referPercentage;
 
   const sponsor = await User.findById(user.sponsor.userId);
   if (!sponsor) {
@@ -457,9 +447,11 @@ exports.inactiveUserToActiveUser = asyncErrorHandler(async (req, res, next) => {
       )
     );
   }
-  console.log(sponsor.username);
+
   sponsor.referBonus += referBonus;
   sponsor.profit += referBonus;
+  sponsor.toDayProfit += referBonus;
+  sponsor.activeBalance += referBonus;
   createTransaction(
     sponsor._id,
     'cashIn',
@@ -467,13 +459,13 @@ exports.inactiveUserToActiveUser = asyncErrorHandler(async (req, res, next) => {
     `Refer Bonus of ${user.name}`
   );
   await sponsor.save();
-  console.log(referBonus);
+
   //update admin balance
   admin.inactiveUsers -= 1;
   admin.activeUsers += 1;
-  admin.activeBalance += user.activeBalance;
-  admin.profit += referBonus;
-  admin.cashBack += user.activeBalance * admin.cashBackPercentage;
+  admin.activeBalance += user.activeBalance + referBonus + cashBack;
+  admin.profit += referBonus + cashBack;
+  admin.cashBack += cashBack;
   admin.referBonus += referBonus;
   await admin.save();
   console.log(user.username, sponsor.username);

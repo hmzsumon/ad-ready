@@ -2,6 +2,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import CloseIcon from '@mui/icons-material/Close';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
+import ListIcon from '@mui/icons-material/List';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PublishIcon from '@mui/icons-material/Publish';
 import ShareIcon from '@mui/icons-material/Share';
@@ -39,6 +40,11 @@ const navMenu = [
     icon: <AccountBoxIcon />,
     label: 'My Profile',
     ref: '/account',
+  },
+  {
+    icon: <ListIcon />,
+    label: 'Tnx History',
+    ref: '/transactions',
   },
   {
     icon: <ShareIcon />,

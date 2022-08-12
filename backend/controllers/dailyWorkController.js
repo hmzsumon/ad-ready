@@ -2,7 +2,9 @@ const ErrorHandler = require('../utils/errorHandler');
 const asyncErrorHandler = require('../middlewares/asyncErrorHandler');
 const DailyWork = require('../models/dailyWorkModel');
 const User = require('../models/userModel');
+const Admin = require('../models/Admin');
 const createTransaction = require('../utils/tnx');
+const adminId = process.env.ADMIN_ID;
 
 // daliy work list
 const dailyWorks = [
@@ -371,22 +373,13 @@ module.exports.submitWork = asyncErrorHandler(async (req, res, next) => {
   // );
   // console.log('newValue', newValue);
 
-  if (user.dailyTaskLimit === 1) {
-    // update user taskValue
-
-    user.isCompleted = true;
-    user.totalWorkDays += 1;
-    // console.log(
-    //   'days',
-
-    //   user.totalWorkingDays
-    // );
-  }
+  // check user submit last task then update isCompleted true
 
   if (user.dailyTaskLimit > 0) {
     user.dailyTaskLimit = user.dailyTaskLimit - 1;
     // update user's dailyIncomeBalance
     user.profit += user.taskValue;
+    user.toDayProfit += user.taskValue;
     user.taskProfit += user.taskValue;
 
     createTransaction(
@@ -397,46 +390,40 @@ module.exports.submitWork = asyncErrorHandler(async (req, res, next) => {
       'daily_work'
     );
   }
+
+  //check user isCompleted is true
+  if (user.dailyTaskLimit === 0) {
+    console.log('user isCompleted');
+    user.isCompleted = true;
+    user.totalWorkDays += 1;
+    user.activeBalance += user.taskValue * user.taskLimit;
+
+    // find sponsor of user
+    const sponsor = await User.findById(user.sponsor.userId);
+    console.log('sponsor', sponsor.username);
+    // sponsor  income 2%
+    const sponsorIncome = user.taskValue * 0.02 * user.taskLimit;
+    console.log('sponsorIncome', sponsorIncome);
+    // update sponsor's dailyIncomeBalance
+    sponsor.profit += sponsorIncome;
+    sponsor.toDayProfit += sponsorIncome;
+    sponsor.activeBalance += sponsorIncome;
+    createTransaction(
+      sponsor._id,
+      'cashIn',
+      sponsorIncome,
+      `Daily Work by 1st Gen 2% ${user.username} `,
+      '1st_gen'
+    );
+    await sponsor.save();
+
+    // find admin
+    const admin = await Admin.findById(adminId);
+    admin.profit += sponsorIncome + user.taskValue * user.taskLimit;
+    admin.activeBalance += sponsorIncome + user.taskValue * user.taskLimit;
+    await admin.save();
+  }
   await user.save();
-
-  // check user isCompleted is true
-  // if (user.isCompleted) {
-  //   // find sponsor of user
-  //   const sponsor = await User.findById(user.sponsorBy);
-  //   // update sponsor's dailyIncomeBalance
-  //   sponsor.dailyIncomeBalance +=
-  //     user.usrTaskValue * 0.05 * user.packageTaskLimit;
-  //   sponsor.incomeBalance += user.usrTaskValue * 0.05 * user.packageTaskLimit;
-  //   sponsor.firstGenBonus += user.usrTaskValue * 0.05 * user.packageTaskLimit;
-  //   createTransaction(
-  //     sponsor._id,
-  //     'cashIn',
-  //     user.usrTaskValue * 0.05 * user.packageTaskLimit,
-  //     `Daily Work by 1st Gen 5% ${user.userName} `,
-  //     '1st_gen'
-  //   );
-  //   await sponsor.save();
-
-  //   // find parent of user
-  //   const parent = await User.findById(user.parent);
-  //   console.log('parent', parent.userName);
-  //   // update parent's dailyIncomeBalance
-  //   parent.dailyIncomeBalance +=
-  //     user.usrTaskValue * 0.025 * user.packageTaskLimit;
-  //   parent.incomeBalance += user.usrTaskValue * 0.025 * user.packageTaskLimit;
-  //   parent.secondGenBonus += user.usrTaskValue * 0.025 * user.packageTaskLimit;
-
-  //   createTransaction(
-  //     parent._id,
-  //     'cashIn',
-  //     user.usrTaskValue * 0.025 * user.packageTaskLimit,
-  //     `Daily Work by 2nd Gen 2.5% ${user.userName} `,
-  //     '2nd_gen'
-  //   );
-  //   await parent.save();
-
-  //   console.log('sponsor', sponsor.userName, 'parent', parent.userName);
-  // }
 
   res.status(200).json({
     success: true,

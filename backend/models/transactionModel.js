@@ -25,7 +25,7 @@ const transactionSchema = new Schema(
 
     amount: { type: Number, required: true },
 
-    currency: { type: String, default: 'USD' },
+    currency: { type: String, default: 'BDT' },
     description: { type: String, default: 'Transaction' },
   },
   { timestamps: true }

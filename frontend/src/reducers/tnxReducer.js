@@ -52,7 +52,7 @@ export const newOrderReducer = (state = {}, { type, payload }) => {
   }
 };
 
-export const myOrdersReducer = (state = { orders: [] }, { type, payload }) => {
+export const myTnxReducer = (state = { orders: [] }, { type, payload }) => {
   switch (type) {
     case MY_ORDERS_REQUEST:
       return {
@@ -136,7 +136,10 @@ export const orderDetailsReducer = (
   }
 };
 
-export const allOrdersReducer = (state = { orders: [] }, { type, payload }) => {
+export const allTransactionsReducer = (
+  state = { transactions: [] },
+  { type, payload }
+) => {
   switch (type) {
     case ALL_ORDERS_REQUEST:
       return {
@@ -145,7 +148,7 @@ export const allOrdersReducer = (state = { orders: [] }, { type, payload }) => {
     case ALL_ORDERS_SUCCESS:
       return {
         loading: false,
-        orders: payload,
+        transactions: payload,
       };
     case ALL_ORDERS_FAIL:
       return {
@@ -162,7 +165,7 @@ export const allOrdersReducer = (state = { orders: [] }, { type, payload }) => {
   }
 };
 
-export const orderReducer = (state = {}, { type, payload }) => {
+export const transactionReducer = (state = {}, { type, payload }) => {
   switch (type) {
     case UPDATE_ORDER_REQUEST:
     case DELETE_ORDER_REQUEST:
