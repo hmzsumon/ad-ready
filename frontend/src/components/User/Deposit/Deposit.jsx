@@ -19,6 +19,7 @@ const depositMethods = [
     icon: '../images/payPal.svg',
     number: '#003087',
     value: 'paypal',
+    isActive: false,
   },
   {
     id: 2,
@@ -26,21 +27,25 @@ const depositMethods = [
     icon: '../images/visa.svg',
     number: '#003087',
     value: 'visa',
+    isActive: false,
   },
+
   {
     id: 3,
     name: 'Mastercard',
     icon: '../images/mastercard.svg',
     number: '#003087',
     value: 'mastercard',
+    isActive: false,
   },
 
   {
     id: 7,
     name: 'Bkash',
     icon: '../images/bKash.svg',
-    number: '01847207766',
+    number: '01985229406',
     value: 'bkash',
+    isActive: true,
   },
   {
     id: 8,
@@ -48,13 +53,15 @@ const depositMethods = [
     icon: '../images/rocket.svg',
     number: '01798880080-3',
     value: 'rocket',
+    isActive: false,
   },
   {
     id: 9,
     name: 'Nagad',
     icon: '../images/nagad.svg',
-    number: '01847207766',
+    number: '01985229406',
     value: 'nagad',
+    isActive: true,
   },
 
   {
@@ -63,6 +70,7 @@ const depositMethods = [
     icon: '../images/bitcoin.svg',
     number: '#003087',
     value: 'bitcoin',
+    isActive: false,
   },
 
   {
@@ -71,6 +79,7 @@ const depositMethods = [
     icon: '../images/payoneer.svg',
     number: '#003087',
     value: 'payoneer',
+    isActive: false,
   },
 ];
 const Deposit = () => {
@@ -177,10 +186,11 @@ const Deposit = () => {
           <div className='grid md:grid-cols-3 gap-4 '>
             {depositMethods.map((method) => {
               return (
-                <div
+                <button
                   key={method.id}
-                  className=' rounded-sm border-gray-300 border-2 cursor-pointer hover:bg-gray-300'
+                  className=' disabled:cursor-not-allowed rounded-sm border-gray-300 border-2 cursor-pointer hover:bg-gray-300'
                   onClick={() => handleSelectMethod(method)}
+                  disabled={!method.isActive}
                 >
                   <img
                     src={method.icon}
@@ -188,7 +198,7 @@ const Deposit = () => {
                     className=' mx-auto w-20 h-20'
                   />
                   {/* <span>{method.name}</span> */}
-                </div>
+                </button>
               );
             })}
           </div>
