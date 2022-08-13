@@ -1,18 +1,11 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { logoutUser } from '../../actions/userAction';
 import Sidebar from './Sidebar/Sidebar';
 import SidebarMobile from './Sidebar/SidebarMobile';
 
 const Dashboard = ({ activeTab, children }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [, setOnMobile] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
-
-  const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (window.innerWidth < 600) {
@@ -20,12 +13,12 @@ const Dashboard = ({ activeTab, children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (user.isVerified === false) {
-      dispatch(logoutUser());
-      navigate(`/user/verify`);
-    }
-  }, [user.isVerified, navigate, user.email, dispatch]);
+  // useEffect(() => {
+  //   if (user.isVerified === false) {
+  //     dispatch(logoutUser());
+  //     navigate(`/user/verify`);
+  //   }
+  // }, [user.isVerified, navigate, user.email, dispatch]);
 
   return (
     <>

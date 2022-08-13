@@ -83,11 +83,11 @@ exports.registerUser = asyncErrorHandler(async (req, res, next) => {
   admin.inactiveUsers += 1;
   await admin.save();
 
-  sendEmail({
-    email: user.email,
-    subject: 'Verify your account',
-    message: `<h4>Your verifiedCode is: ${verifiedCode} </h4>`,
-  });
+  // sendEmail({
+  //   email: user.email,
+  //   subject: 'Verify your account',
+  //   message: `<h4>Your verifiedCode is: ${verifiedCode} </h4>`,
+  // });
   sendToken(user, 201, res);
 });
 

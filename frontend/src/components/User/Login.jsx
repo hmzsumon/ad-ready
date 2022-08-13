@@ -13,7 +13,7 @@ const Login = () => {
   const { enqueueSnackbar } = useSnackbar();
   const location = useLocation();
 
-  const { loading, isAuthenticated, error, user } = useSelector(
+  const { loading, isAuthenticated, error } = useSelector(
     (state) => state.user
   );
 
@@ -28,13 +28,6 @@ const Login = () => {
   const redirect = location.search
     ? location.search.split('=')[1]
     : 'dashboard';
-
-  // check user is verified or not
-  useEffect(() => {
-    if (user && user.isVerified === false) {
-      navigate(`/user/verify`);
-    }
-  }, [user, navigate]);
 
   useEffect(() => {
     if (error) {

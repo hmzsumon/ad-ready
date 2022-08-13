@@ -80,7 +80,7 @@ const Register = () => {
       dispatch(clearErrors());
     }
     if (isAuthenticated) {
-      navigate(`/user/verify`);
+      navigate(`/dashboard`);
     }
   }, [dispatch, error, isAuthenticated, navigate, enqueueSnackbar, email]);
   console.log('t&C', tramsAndConditions);
