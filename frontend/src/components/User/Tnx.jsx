@@ -13,6 +13,8 @@ const Transactions = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
+  const { user } = useSelector((state) => state.user);
+
   const { transactions, error } = useSelector((state) => state.tnx);
   const {
     loading,
@@ -38,7 +40,7 @@ const Transactions = () => {
 
   const columns = [
     {
-      field: 'id',
+      field: 'createdAt',
       headerName: 'Date & Time',
       minWidth: 200,
       flex: 0.2,
@@ -51,11 +53,11 @@ const Transactions = () => {
       flex: 0.2,
       renderCell: (params) => {
         return (
-          <div>
-            <span className=' text-green-500 ml-5'>
+          <div className='mx-auto'>
+            <span className=' text-green-500 '>
               {params.row.transactionType === 'cashIn' && 'Cash In'}
             </span>
-            <span className=' text-red-500 text-center l-5'>
+            <span className=' text-red-500 text-center '>
               {params.row.transactionType === 'cashOut' && 'Cash Out'}
             </span>
           </div>
@@ -71,9 +73,9 @@ const Transactions = () => {
       flex: 0.2,
       renderCell: (params) => {
         return (
-          <div>
+          <div className=' mx-auto'>
             {params.row.transactionType === 'cashIn' && (
-              <span className=' flex items-center  text-green-500 '>
+              <span className=' flex items-center   text-green-500 '>
                 + {params.row.amount.toLocaleString()} <TbCurrencyTaka />
               </span>
             )}
@@ -104,7 +106,7 @@ const Transactions = () => {
   transactions &&
     transactions.forEach((tnx) => {
       rows.unshift({
-        id: formatDate(tnx.createdAt),
+        id: tnx._id,
         amount: tnx.amount,
         transactionType: tnx.transactionType,
         createdAt: formatDate(tnx.createdAt),
@@ -114,7 +116,7 @@ const Transactions = () => {
 
   return (
     <>
-      <MetaData title='Admin Orders | Flipkart' />
+      <MetaData title={` ${user.name} | Transactions  `} />
 
       {loading && <BackdropLoader />}
 

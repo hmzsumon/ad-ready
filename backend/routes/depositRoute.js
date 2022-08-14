@@ -11,6 +11,7 @@ const {
   approvedDeposit,
   getAllTodayDeposits,
   updateTotalDepositAmount,
+  getLoginUserDeposits,
 } = require('../controllers/depositController');
 const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
 
@@ -56,5 +57,8 @@ router.put(
   authorizeRoles('admin'),
   updateTotalDepositAmount
 );
+
+// get all deposits for login user
+router.get('/user/deposits', isAuthenticatedUser, getLoginUserDeposits);
 
 module.exports = router;

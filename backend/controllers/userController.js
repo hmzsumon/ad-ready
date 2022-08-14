@@ -144,6 +144,35 @@ exports.loginUser = asyncErrorHandler(async (req, res, next) => {
   sendToken(user, 201, res);
 });
 
+// ===============================================================
+// @route   POST api/v1/admin/login
+// @desc    Login a admin
+// @access  Private
+// ===============================================================
+exports.adminLogin = asyncErrorHandler(async (req, res, next) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return next(new ErrorHandler('Please Enter User Name And Password', 400));
+  }
+
+  //find user by username or phone
+  const admin = await User.findOne({ username }).select('+password');
+  if (!admin) {
+    return next(new ErrorHandler('Invalid User Name or Password', 401));
+  }
+
+  // user role is not admin
+  if (admin.role !== 'admin') {
+    return next(new ErrorHandler(" You don't have permission to login", 401));
+  }
+
+  const isPasswordMatched = await admin.comparePassword(password);
+  if (!isPasswordMatched) {
+    return next(new ErrorHandler('Invalid User Name  or Password', 401));
+  }
+  sendToken(admin, 201, res);
+});
+
 // Logout User
 exports.logoutUser = asyncErrorHandler(async (req, res, next) => {
   res.cookie('token', null, {

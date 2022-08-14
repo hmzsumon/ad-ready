@@ -1,5 +1,8 @@
 import axios from 'axios';
 import {
+  ALL_DEPOSIT_FAIL,
+  ALL_DEPOSIT_REQUEST,
+  ALL_DEPOSIT_SUCCESS,
   CLEAR_ERRORS,
   DEPOSIT_FAIL,
   DEPOSIT_REQUEST,
@@ -24,6 +27,23 @@ export const depositRequest = (deposit) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: DEPOSIT_FAIL,
+      payload: error.response.data.message,
+    });
+  }
+};
+
+// get logged in user's deposit history
+export const getDepositHistory = () => async (dispatch) => {
+  dispatch({ type: ALL_DEPOSIT_REQUEST });
+  try {
+    const { data } = await axios.get('/api/v1/user/deposits');
+    dispatch({
+      type: ALL_DEPOSIT_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ALL_DEPOSIT_FAIL,
       payload: error.response.data.message,
     });
   }

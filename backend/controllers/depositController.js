@@ -199,7 +199,6 @@ exports.updateTotalDepositAmount = asyncErrorHandler(async (req, res, next) => {
     // withdraw count
     // const depositsCount = withdraws.length;
 
-    console.log('totalWithdraws', user.userName, totalDeposits);
     // update user total withdraws
     user.totalDeposit = totalDeposits;
 
@@ -210,5 +209,24 @@ exports.updateTotalDepositAmount = asyncErrorHandler(async (req, res, next) => {
     success: true,
     message: 'Withdraw updated',
     users: users.length,
+  });
+});
+
+// ========================================================================
+// ====================== get login user's deposits =========================
+exports.getLoginUserDeposits = asyncErrorHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return next(new ErrorHandler('User not found', 404));
+  }
+  const deposits = await Deposit.find({
+    userId: user._id,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: 'Deposits fetched',
+    length: deposits.length,
+    deposits,
   });
 });

@@ -9,6 +9,7 @@ import Account from './components/User/Account';
 import Condition from './components/User/Condition';
 import Dashboard from './components/User/Dashboard';
 import Deposit from './components/User/Deposit/Deposit';
+import Deposits from './components/User/Deposit/DepositHistory';
 import Login from './components/User/Login';
 import MainData from './components/User/MainData';
 import Referral from './components/User/Referral';
@@ -152,6 +153,18 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
+
+        <Route
+          path='/deposit/history'
+          element={
+            <ProtectedRoute>
+              <Dashboard>
+                <Deposits />
+              </Dashboard>
+            </ProtectedRoute>
+          }
+        ></Route>
+
         <Route
           path='/referral'
           element={

@@ -1,49 +1,139 @@
 import { DataGrid } from '@mui/x-data-grid';
-import * as React from 'react';
+import { useSnackbar } from 'notistack';
+import { useEffect } from 'react';
+import { TbCurrencyTaka } from 'react-icons/tb';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearErrors, getDepositHistory } from '../../../actions/depositAction';
 
-const columns = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'firstName', headerName: 'First name', width: 130 },
-  { field: 'lastName', headerName: 'Last name', width: 130 },
-  {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
-    width: 90,
-  },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  },
-];
+import { formatDate } from '../../../utils/functions';
+import BackdropLoader from '../../Layouts/BackdropLoader';
+import MetaData from '../../Layouts/MetaData';
 
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-];
+const Deposits = () => {
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
-export default function DataTable() {
-  return (
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-      />
-    </div>
+  const { user } = useSelector((state) => state.user);
+
+  const { loading, deposits, length, error } = useSelector(
+    (state) => state.allDeposit
   );
-}
+
+  useEffect(() => {
+    if (error) {
+      enqueueSnackbar(error, { variant: 'error' });
+      dispatch(clearErrors());
+    }
+
+    dispatch(getDepositHistory());
+  }, [dispatch, enqueueSnackbar, error]);
+
+  const columns = [
+    {
+      field: 'createdAt',
+      headerName: 'Date & Time',
+      minWidth: 200,
+      flex: 0.2,
+    },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      headerAlign: 'center',
+      type: 'number',
+      minWidth: 200,
+      flex: 0.2,
+      renderCell: (params) => {
+        return (
+          <div className='mx-auto'>
+            <span className=' flex items-center'>
+              <TbCurrencyTaka /> {params.row.amount.toLocaleString()}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      headerAlign: 'center',
+      minWidth: 200,
+      flex: 0.2,
+      renderCell: (params) => {
+        return (
+          <div className='mx-auto'>
+            <span
+              className={`${
+                params.row.status === 'SUCCESS'
+                  ? 'text-green-500'
+                  : 'text-gray-700'
+              }`}
+            >
+              {params.row.status.toLocaleString()}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      field: 'approvedAt',
+      headerName: 'Approved At',
+      headerAlign: 'center',
+      minWidth: 200,
+      flex: 0.2,
+      renderCell: (params) => {
+        return (
+          <div className='mx-auto'>
+            {params.row.status === 'SUCCESS' ? (
+              <span className='text-gray-700'>
+                {formatDate(params.row.approvedAt)}
+              </span>
+            ) : (
+              '- - -'
+            )}
+          </div>
+        );
+      },
+    },
+  ];
+
+  const rows = [];
+
+  deposits &&
+    deposits.forEach((deposit) => {
+      rows.unshift({
+        id: deposit._id,
+        createdAt: formatDate(deposit.createdAt),
+        amount: deposit.amount,
+        status: deposit.status,
+        transactionType: deposit.transactionType,
+        approvedAt: formatDate(deposit.updatedAt),
+      });
+    });
+
+  return (
+    <>
+      <MetaData title={` ${user.name} | Deposits  `} />
+
+      {loading && <BackdropLoader />}
+
+      <h1 className='text-lg font-medium uppercase'>transactions: {length}</h1>
+      <div
+        className='bg-white rounded-xl shadow-lg w-full'
+        style={{ height: 470 }}
+      >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          pageSize={10}
+          disableSelectIconOnClick
+          sx={{
+            boxShadow: 0,
+            border: 0,
+          }}
+        />
+      </div>
+    </>
+  );
+};
+
+export default Deposits;

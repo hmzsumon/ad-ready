@@ -18,6 +18,7 @@ const {
   getAllUsersIncomeBalance,
   getTodayNewUsers,
   inactiveUserToActiveUser,
+  adminLogin,
 } = require('../controllers/userController');
 const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
 
@@ -69,5 +70,7 @@ router
 router
   .route('/user/inactive-to-active')
   .put(isAuthenticatedUser, inactiveUserToActiveUser);
+
+router.route('/admin/login').post(adminLogin);
 
 module.exports = router;

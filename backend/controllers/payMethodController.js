@@ -4,12 +4,15 @@ const PayMethod = require('../models/payMethodModel');
 
 // create a new pay method
 exports.createPayMethod = asyncErrorHandler(async (req, res, next) => {
-  const { name, accountNumber, bankName, type } = req.body;
+  const { name, accountNumber, bankName, type, isActive, icon } = req.body;
   const payMethod = await PayMethod.create({
     name,
     accountNumber,
     bankName,
     type,
+    value: name.toLowerCase(),
+    isActive,
+    icon,
   });
   res.status(201).json({
     success: true,

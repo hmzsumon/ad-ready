@@ -8,80 +8,12 @@ import {
   depositRequest,
   resetDeposit,
 } from '../../../actions/depositAction';
+import { getAllPaymentMethods } from '../../../actions/payMehtodAction';
 
 import BackdropLoader from '../../Layouts/BackdropLoader';
 
 import CopyBtn from '../../Reusable/CopyBtn';
-const depositMethods = [
-  {
-    id: 1,
-    name: 'Paypal',
-    icon: '../images/payPal.svg',
-    number: '#003087',
-    value: 'paypal',
-    isActive: false,
-  },
-  {
-    id: 2,
-    name: 'Visa',
-    icon: '../images/visa.svg',
-    number: '#003087',
-    value: 'visa',
-    isActive: false,
-  },
 
-  {
-    id: 3,
-    name: 'Mastercard',
-    icon: '../images/mastercard.svg',
-    number: '#003087',
-    value: 'mastercard',
-    isActive: false,
-  },
-
-  {
-    id: 7,
-    name: 'Bkash',
-    icon: '../images/bKash.svg',
-    number: '01985229406',
-    value: 'bkash',
-    isActive: true,
-  },
-  {
-    id: 8,
-    name: 'Rocket',
-    icon: '../images/rocket.svg',
-    number: '01798880080-3',
-    value: 'rocket',
-    isActive: false,
-  },
-  {
-    id: 9,
-    name: 'Nagad',
-    icon: '../images/nagad.svg',
-    number: '01985229406',
-    value: 'nagad',
-    isActive: true,
-  },
-
-  {
-    id: 11,
-    name: 'Bitcoin',
-    icon: '../images/bitcoin.svg',
-    number: '#003087',
-    value: 'bitcoin',
-    isActive: false,
-  },
-
-  {
-    id: 13,
-    name: 'Payoneer',
-    icon: '../images/payoneer.svg',
-    number: '#003087',
-    value: 'payoneer',
-    isActive: false,
-  },
-];
 const Deposit = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -94,6 +26,10 @@ const Deposit = () => {
 
   const { loading, error, isDeposit, message } = useSelector(
     (state) => state.deposit
+  );
+
+  const { loading: allLoad, paymentMethods } = useSelector(
+    (state) => state.payMethod
   );
 
   // handle select method
@@ -131,6 +67,7 @@ const Deposit = () => {
       enqueueSnackbar(message, { variant: 'success' });
       dispatch(resetDeposit());
     }
+    dispatch(getAllPaymentMethods());
   }, [isDeposit, message, enqueueSnackbar, error, dispatch]);
 
   // validate amount
@@ -148,6 +85,10 @@ const Deposit = () => {
     // console.log(errors);
     return errors;
   };
+
+  if (allLoad) {
+    return <BackdropLoader />;
+  }
   return (
     <>
       {!method ? (
@@ -184,7 +125,7 @@ const Deposit = () => {
           </div>
           <h1 className='my-2 text-xl text-gray-800'>Payment Methods</h1>
           <div className='grid md:grid-cols-3 gap-4 '>
-            {depositMethods.map((method) => {
+            {paymentMethods.map((method) => {
               return (
                 <button
                   key={method.id}
@@ -193,7 +134,7 @@ const Deposit = () => {
                   disabled={!method.isActive}
                 >
                   <img
-                    src={method.icon}
+                    src={`../images/${method.icon}.svg`}
                     alt={method.name}
                     className=' mx-auto w-20 h-20'
                   />
@@ -219,7 +160,7 @@ const Deposit = () => {
               <div className=' md:w-5/12 mx-auto '>
                 <div className=' rounded-sm border-gray-300 border-2 cursor-pointer hover:bg-gray-300'>
                   <img
-                    src={method.icon}
+                    src={`../images/${method.icon}.svg`}
                     alt={method.name}
                     className=' mx-auto w-20 h-20'
                   />
@@ -241,19 +182,24 @@ const Deposit = () => {
                       this{' '}
                       <span className='text-green-500'>{method.name} </span>{' '}
                       Personal Number:{' '}
-                      <span className='text-orange-400'>{method.number}</span>{' '}
+                      <span className='text-orange-400'>
+                        {method.accountNumber}
+                      </span>{' '}
                     </label>
                     <div className='flex relative'>
                       <input
                         type='text'
                         name='confirmPassword'
                         className='border-0 disabled:cursor-not-allowed px-3 py-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150'
-                        value={method.number}
+                        value={method.accountNumber}
                         readOnly
                         disabled
                       />
                       <span className=' absolute right-3 top-3'>
-                        <CopyBtn text={method.number} icon={<FaRegCopy />} />
+                        <CopyBtn
+                          text={method.accountNumber}
+                          icon={<FaRegCopy />}
+                        />
                       </span>
                     </div>
                   </div>

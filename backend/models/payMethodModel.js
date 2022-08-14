@@ -8,6 +8,11 @@ const PayMethodSchema = new Schema(
       required: true,
       trim: true,
     },
+    value: {
+      type: String,
+
+      trim: true,
+    },
     accountNumber: {
       type: String,
       required: true,
@@ -23,6 +28,13 @@ const PayMethodSchema = new Schema(
       trim: true,
       enum: ['personal', 'agent'],
       default: 'personal',
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    icon: {
+      type: String,
     },
   },
   {

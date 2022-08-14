@@ -13,9 +13,11 @@ import {
   verifyUserReducer,
 } from './reducers/userReducer';
 
+import { payMethodReducer } from './reducers/payMethodReducer';
+
 import { withdrawReducer } from './reducers/withdrawReducer';
 
-import { depositReducer } from './reducers/depositReducer';
+import { allDepositReducer, depositReducer } from './reducers/depositReducer';
 
 import {
   allTransactionsReducer,
@@ -33,10 +35,12 @@ const reducer = combineReducers({
   userActivate: userActivateReducer,
 
   deposit: depositReducer,
+  allDeposit: allDepositReducer,
 
   withdraw: withdrawReducer,
   tnx: allTransactionsReducer,
   transaction: transactionReducer,
+  payMethod: payMethodReducer,
 });
 
 let initialState = {};
