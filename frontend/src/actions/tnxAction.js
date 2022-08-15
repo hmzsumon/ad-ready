@@ -115,7 +115,7 @@ export const getAllTransactions = () => async (dispatch) => {
 
     dispatch({
       type: ALL_ORDERS_SUCCESS,
-      payload: data.transactions,
+      payload: data,
     });
   } catch (error) {
     dispatch({

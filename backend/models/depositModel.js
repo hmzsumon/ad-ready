@@ -45,6 +45,7 @@ const depositSchema = new Schema(
     currency: { type: String, default: 'BDT' },
     numberOfDeposit: { type: Number, default: 0 },
     method: { type: String, required: true },
+    approvedAt: { type: Date },
   },
   { timestamps: true }
 );

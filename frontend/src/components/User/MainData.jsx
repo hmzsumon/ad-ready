@@ -193,12 +193,12 @@ const MainData = () => {
       {/* Model Section */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
-          How many tasks do you want to complete each day?
+          <small>আপনি প্রতিদিন কতগুলি কাজ সম্পূর্ণ করতে চান?</small>
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Remember you have to do at least five tasks and the maximum is up to
-            you
+            মনে রাখবেন আপনাকে কমপক্ষে পাঁচটি কাজ করতে হবে এবং সর্বোচ্চটি আপনার
+            উপর নির্ভর করে
           </DialogContentText>
           <TextField
             autoFocus

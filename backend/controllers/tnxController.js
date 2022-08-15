@@ -74,15 +74,16 @@ exports.myOrders = asyncErrorHandler(async (req, res, next) => {
 });
 
 // ======================================================================
-//  Get All Transactions by User id
+//  Get logged in user's All Transactions by User id
 // ======================================================================
 exports.getAllTransactions = asyncErrorHandler(async (req, res, next) => {
-  const transactions = await Transaction.find({ user: req.user._id });
+  const transactions = await Transaction.find({ userId: req.user._id });
   if (!transactions) {
     return next(new ErrorHandler('Transaction Not Found', 404));
   }
   res.status(200).json({
     success: true,
+    length: transactions.length,
     transactions,
   });
 });

@@ -137,7 +137,7 @@ export const orderDetailsReducer = (
 };
 
 export const allTransactionsReducer = (
-  state = { transactions: [] },
+  state = { transactions: [], length: 0 },
   { type, payload }
 ) => {
   switch (type) {
@@ -148,7 +148,8 @@ export const allTransactionsReducer = (
     case ALL_ORDERS_SUCCESS:
       return {
         loading: false,
-        transactions: payload,
+        transactions: payload.transactions,
+        length: payload.length,
       };
     case ALL_ORDERS_FAIL:
       return {

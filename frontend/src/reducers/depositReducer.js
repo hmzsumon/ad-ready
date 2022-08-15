@@ -46,7 +46,7 @@ export const depositReducer = (state = {}, { type, payload }) => {
 
 // get all deposits reducer
 export const allDepositReducer = (
-  state = { deposits: [], length: 0 },
+  state = { deposits: [] },
   { type, payload }
 ) => {
   switch (type) {

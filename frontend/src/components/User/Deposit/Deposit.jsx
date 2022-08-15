@@ -2,7 +2,7 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect } from 'react';
 import { FaRegCopy } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   clearErrors,
   depositRequest,
@@ -15,6 +15,7 @@ import BackdropLoader from '../../Layouts/BackdropLoader';
 import CopyBtn from '../../Reusable/CopyBtn';
 
 const Deposit = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -38,7 +39,6 @@ const Deposit = () => {
       setErrors(validate(amount));
     } else {
       setMethod(method);
-      console.log(method);
     }
   };
 
@@ -51,9 +51,9 @@ const Deposit = () => {
     myForm.set('accountNumber', userNumber);
     myForm.set('transactionId', tnxId);
 
-    for (let key of myForm.entries()) {
-      console.log(key[0] + ', ' + key[1]);
-    }
+    // for (let key of myForm.entries()) {
+    //   console.log(key[0] + ', ' + key[1]);
+    // }
     dispatch(depositRequest(myForm));
   };
 
@@ -66,9 +66,12 @@ const Deposit = () => {
     if (isDeposit) {
       enqueueSnackbar(message, { variant: 'success' });
       dispatch(resetDeposit());
+      setTimeout(() => {
+        navigate('/deposit/history');
+      }, 1000);
     }
     dispatch(getAllPaymentMethods());
-  }, [isDeposit, message, enqueueSnackbar, error, dispatch]);
+  }, [isDeposit, message, enqueueSnackbar, error, dispatch, navigate]);
 
   // validate amount
   const validate = (values) => {

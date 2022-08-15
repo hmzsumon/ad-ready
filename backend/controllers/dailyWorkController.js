@@ -175,11 +175,10 @@ module.exports.updateTasksLimit = asyncErrorHandler(async (req, res, next) => {
 module.exports.givWorkToUsers = asyncErrorHandler(async (req, res, next) => {
   // incomebalance > 3000
   const users = await User.find({
-    userHasPackage: true,
     role: 'user',
     incomeBalance: { $gt: 2999 },
   });
-  console.log('users', users.length);
+
   if (!users) {
     return next(new ErrorHandler('User not found', 404));
   }

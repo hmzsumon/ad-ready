@@ -2,6 +2,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 import { TbCurrencyTaka } from 'react-icons/tb';
+import Moment from 'react-moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearErrors, getAllTransactions } from '../../actions/tnxAction';
 import { DELETE_ORDER_RESET } from '../../constants/orderConstants';
@@ -20,6 +21,7 @@ const Transactions = () => {
     loading,
     isDeleted,
     error: deleteError,
+    length,
   } = useSelector((state) => state.transaction);
 
   useEffect(() => {
@@ -44,6 +46,13 @@ const Transactions = () => {
       headerName: 'Date & Time',
       minWidth: 200,
       flex: 0.2,
+      renderCell: (params) => {
+        return (
+          <div className='mx-auto'>
+            <Moment format='DD/MM/YYYY hh:mm a'>{params.row.createdAt}</Moment>
+          </div>
+        );
+      },
     },
     {
       field: 'transactionType',
@@ -120,7 +129,7 @@ const Transactions = () => {
 
       {loading && <BackdropLoader />}
 
-      <h1 className='text-lg font-medium uppercase'>transactions</h1>
+      <h1 className='text-lg font-medium uppercase'>transactions: {length} </h1>
       <div
         className='bg-white rounded-xl shadow-lg w-full'
         style={{ height: 470 }}

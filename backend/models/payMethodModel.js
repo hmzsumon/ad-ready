@@ -10,7 +10,6 @@ const PayMethodSchema = new Schema(
     },
     value: {
       type: String,
-
       trim: true,
     },
     accountNumber: {

@@ -93,6 +93,7 @@ exports.approvedDeposit = asyncErrorHandler(async (req, res, next) => {
     return next(new ErrorHandler('Deposit request not found', 404));
   }
   deposit.status = 'SUCCESS';
+  deposit.approvedAt = Date.now();
   await deposit.save();
 
   const user = await User.findById(deposit.userId);

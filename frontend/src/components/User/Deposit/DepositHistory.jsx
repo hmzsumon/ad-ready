@@ -85,10 +85,10 @@ const Deposits = () => {
           <div className='mx-auto'>
             {params.row.status === 'SUCCESS' ? (
               <span className='text-gray-700'>
-                {formatDate(params.row.approvedAt)}
+                {params.row.approvedAt.toLocaleString()}
               </span>
             ) : (
-              '- - -'
+              '- - - -'
             )}
           </div>
         );
@@ -106,7 +106,7 @@ const Deposits = () => {
         amount: deposit.amount,
         status: deposit.status,
         transactionType: deposit.transactionType,
-        approvedAt: formatDate(deposit.updatedAt),
+        approvedAt: formatDate(deposit.approvedAt),
       });
     });
 
