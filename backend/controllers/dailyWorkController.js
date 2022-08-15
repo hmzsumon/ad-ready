@@ -396,6 +396,7 @@ module.exports.submitWork = asyncErrorHandler(async (req, res, next) => {
     user.isCompleted = true;
     user.totalWorkDays += 1;
     user.activeBalance += user.taskValue * user.taskLimit;
+    user.withdrawBalance += user.taskValue * user.taskLimit;
 
     // find sponsor of user
     const sponsor = await User.findById(user.sponsor.userId);
@@ -407,6 +408,7 @@ module.exports.submitWork = asyncErrorHandler(async (req, res, next) => {
     sponsor.profit += sponsorIncome;
     sponsor.toDayProfit += sponsorIncome;
     sponsor.activeBalance += sponsorIncome;
+    sponsor.withdrawBalance += sponsorIncome;
     createTransaction(
       sponsor._id,
       'cashIn',

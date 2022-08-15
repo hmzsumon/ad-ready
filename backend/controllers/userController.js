@@ -460,7 +460,7 @@ exports.inactiveUserToActiveUser = asyncErrorHandler(async (req, res, next) => {
   user.taskLimit = numTaskLimit;
   user.dailyTaskLimit = numTaskLimit;
   user.taskValue = taskValue;
-  user.withdrawBalance += user.mainBalance;
+  user.withdrawBalance += user.profit;
   await user.save();
 
   // find sponsor by sponsorId
