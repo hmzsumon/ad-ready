@@ -68,7 +68,7 @@ const ForgotPassword = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
-
+                  <small>Please check Your inbox or spam</small>
                   {/* <!-- button container --> */}
                   <div className='flex flex-col gap-2.5 mt-2 mb-32'>
                     <p class='text-xs text-primary-grey text-left'>
