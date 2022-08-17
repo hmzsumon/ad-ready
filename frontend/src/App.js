@@ -10,10 +10,12 @@ import Condition from './components/User/Condition';
 import Dashboard from './components/User/Dashboard';
 import Deposit from './components/User/Deposit/Deposit';
 import Deposits from './components/User/Deposit/DepositHistory';
+import ForgotPassword from './components/User/ForgotPassword';
 import Login from './components/User/Login';
 import MainData from './components/User/MainData';
 import Referral from './components/User/Referral';
 import Register from './components/User/Register';
+import ResetPassword from './components/User/ResetPassword';
 import NoTask from './components/User/Task/NoTask';
 import Submit from './components/User/Task/Submit';
 import Task from './components/User/Task/Task';
@@ -22,6 +24,7 @@ import UpdatePassword from './components/User/UpdatePassword';
 import UpdateProfile from './components/User/UpdateProfile';
 import Verify from './components/User/Verifi';
 import Withdraw from './components/User/Withdraw/Withdraw';
+import WithdrawList from './components/User/Withdraw/WithdrawList';
 import ProtectedRoute from './Routes/ProtectedRoute';
 
 function App() {
@@ -65,6 +68,9 @@ function App() {
         <Route path='/register' element={<Register />} />
         <Route path='/condition' element={<Condition />} />
         <Route path='/user/verify' element={<Verify />} />
+        <Route path='/password/forgot' element={<ForgotPassword />} />
+
+        <Route path='/password/reset/:token' element={<ResetPassword />} />
         <Route
           path='/dashboard'
           element={
@@ -160,6 +166,17 @@ function App() {
             <ProtectedRoute>
               <Dashboard>
                 <Deposits />
+              </Dashboard>
+            </ProtectedRoute>
+          }
+        ></Route>
+
+        <Route
+          path='/withdraw/history'
+          element={
+            <ProtectedRoute>
+              <Dashboard>
+                <WithdrawList />
               </Dashboard>
             </ProtectedRoute>
           }

@@ -14,6 +14,7 @@ const {
   getAllTodayWithdraws,
   cancelWithdraw,
   updateUserLastWithdrawDate,
+  activeBalanceWithdraw,
 } = require('../controllers/withdrawController');
 const router = express.Router();
 
@@ -62,5 +63,10 @@ router
     authorizeRoles('admin'),
     updateUserLastWithdrawDate
   );
+
+// active balance withdraw
+router
+  .route('/active/balance/withdraw')
+  .post(isAuthenticatedUser, activeBalanceWithdraw);
 
 module.exports = router;

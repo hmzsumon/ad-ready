@@ -23,7 +23,7 @@ const Task = () => {
   }, [dispatch, user._id]);
 
   useEffect(() => {
-    if (details.dailyTaskLimit === 0) {
+    if (details.dailyTaskLimit === 0 || user.isActive === false) {
       navigate(`/no-task`);
     } else if (data) {
       setLoading(true);
@@ -33,7 +33,7 @@ const Task = () => {
     } else {
       setLoading(true);
     }
-  }, [data, details, navigate]);
+  }, [data, details, navigate, user.isActive]);
 
   return (
     <>

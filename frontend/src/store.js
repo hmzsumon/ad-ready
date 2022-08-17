@@ -15,7 +15,7 @@ import {
 
 import { payMethodReducer } from './reducers/payMethodReducer';
 
-import { withdrawReducer } from './reducers/withdrawReducer';
+import { activeBWReducer, withdrawReducer } from './reducers/withdrawReducer';
 
 import { allDepositReducer, depositReducer } from './reducers/depositReducer';
 
@@ -38,6 +38,7 @@ const reducer = combineReducers({
   allDeposit: allDepositReducer,
 
   withdraw: withdrawReducer,
+  activeBW: activeBWReducer,
   tnx: allTransactionsReducer,
   transaction: transactionReducer,
   payMethod: payMethodReducer,

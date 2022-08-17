@@ -52,23 +52,21 @@ const Account = () => {
                       id='personalInputs'
                     >
                       <div className='flex flex-col gap-0.5 w-64 px-3 py-1.5 rounded-sm border inputs cursor-not-allowed bg-gray-100 focus-within:border-primary-blue'>
-                        <label className='text-xs text-gray-500'>
-                          First Name
-                        </label>
+                        <label className='text-xs text-gray-500'>Name</label>
                         <input
                           type='text'
-                          value={user.name.split(' ', 1)}
+                          value={user.name}
                           className='text-sm outline-none border-none cursor-not-allowed text-gray-500'
                           disabled
                         />
                       </div>
                       <div className='flex flex-col gap-0.5 w-64 px-3 py-1.5 rounded-sm border inputs cursor-not-allowed bg-gray-100 focus-within:border-primary-blue'>
                         <label className='text-xs text-gray-500'>
-                          Last Name
+                          User Name
                         </label>
                         <input
                           type='text'
-                          value={getLastName()}
+                          value={user.username}
                           className='text-sm outline-none border-none cursor-not-allowed text-gray-500'
                           disabled
                         />
@@ -167,7 +165,7 @@ const Account = () => {
                         </label>
                         <input
                           type='tel'
-                          value='+919876543210'
+                          value={user.phone}
                           className='text-sm outline-none border-none text-gray-500 cursor-not-allowed'
                           disabled
                         />

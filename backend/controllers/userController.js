@@ -208,20 +208,20 @@ exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
 
-  // const resetPasswordUrl = `${req.protocol}://${req.get("host")}/password/reset/${resetToken}`;
-  const resetPasswordUrl = `https://${req.get(
+  const resetPasswordUrl = `${req.protocol}://${req.get(
     'host'
   )}/password/reset/${resetToken}`;
+  // const resetPasswordUrl = `https://${req.get(
+  //   'host'
+  // )}/password/reset/${resetToken}`;
 
-  // const message = `Your password reset token is : \n\n ${resetPasswordUrl}`;
+  const message = `Your password reset token is : \n\n ${resetPasswordUrl}`;
 
   try {
     await sendEmail({
       email: user.email,
-      templateId: process.env.SENDGRID_RESET_TEMPLATEID,
-      data: {
-        reset_url: resetPasswordUrl,
-      },
+      subject: 'Password Reset Token',
+      message,
     });
 
     res.status(200).json({

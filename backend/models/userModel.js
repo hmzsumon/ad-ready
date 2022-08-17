@@ -28,6 +28,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
 
+    gender: {
+      type: String,
+      default: 'male',
+    },
+
     tramsAndConditions: {
       type: Boolean,
       required: [true, 'Please Accept Terms and Conditions'],

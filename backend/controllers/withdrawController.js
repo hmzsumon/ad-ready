@@ -55,11 +55,6 @@ module.exports.withdrawRequest = asyncErrorHandler(async (req, res, next) => {
   user.withdrawBalance -= numAmount;
   user.currentProfit -= numAmount;
   user.withdraw.numberOfWithdraw += 1;
-  user.withdraw.total += numAmount;
-  user.withdraw.lastWithdraw = numAmount;
-  user.withdraw.lastWithdrawDate = Date.now();
-
-  //user.status = 'suspended';
   await user.save();
 
   //update admin withdraw
@@ -73,6 +68,79 @@ module.exports.withdrawRequest = asyncErrorHandler(async (req, res, next) => {
     data: withdraw,
   });
 });
+
+//=======================================================================
+//===================== withdraw request for active Balance========================
+module.exports.activeBalanceWithdraw = asyncErrorHandler(
+  async (req, res, next) => {
+    // find admin by adminId
+    const admin = await Admin.findById(adminId);
+    const userId = req.user._id;
+    const { method, accountNumber } = req.body;
+
+    if (!method || !accountNumber) {
+      return next(new ErrorHandler('Please fill all fields', 400));
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(new ErrorHandler('User not found', 404));
+    }
+
+    const totalWithdraw = user.withdraw.total;
+
+    // check user withdrawBalance > totalWithdraw
+    if (user.mainBalance < totalWithdraw) {
+      return next(new ErrorHandler('Insufficient balance', 400));
+    }
+
+    const totalAmount = user.mainBalance - totalWithdraw;
+
+    const withdrawCharge = totalAmount * admin.withdrawCharge;
+
+    const netAmount = totalAmount - withdrawCharge;
+
+    // create withdraw request
+    const withdraw = await Withdraw.create({
+      userId,
+      username: user.username,
+      name: user.name,
+      accountNumber,
+      amount: totalAmount,
+      withdrawCharge,
+      netAmount,
+      totalAmount,
+      method,
+      status: 'pending',
+      numberOfWithdraw: user.withdraw.numberOfWithdraw + 1,
+      remainingBalance: user.activeBalance - netAmount,
+      balanceFrom: 'activeBalance',
+    });
+    // update user balance
+    user.activeBalance = 0;
+    user.mainBalance = 0;
+    createTransaction(userId, 'cashOut', netAmount, 'withdraw request');
+    user.withdrawBalance = 0;
+    user.currentProfit = 0;
+    user.withdraw.numberOfWithdraw += 1;
+    user.status = 'inactive';
+    user.isActive = false;
+
+    //user.status = 'suspended';
+    await user.save();
+
+    //update admin withdraw
+    admin.totalPendingWithdraw.amount += totalAmount;
+    admin.totalPendingWithdraw.count += 1;
+    await admin.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Withdraw request created',
+      data: withdraw,
+    });
+  }
+);
 
 // get withdraws by agentId
 module.exports.getAgentWithdraws = asyncErrorHandler(async (req, res, next) => {
@@ -119,6 +187,7 @@ module.exports.getUserWithdraws = asyncErrorHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: 'Withdraws fetched',
+    length: withdraws.length,
     withdraws,
   });
 });
@@ -139,15 +208,16 @@ module.exports.getWithdraw = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-// approve withdraw request by agent
+//=========================== approve withdraw ============================
+// approve withdraw request by admin
 module.exports.approveWithdraw = asyncErrorHandler(async (req, res, next) => {
   // const withdrawId = req.params.id;
   const { withdrawId, approvedAccountNumber, approveTnxId } = req.body;
 
   //check user role admin and agent
-  const adminId = req.user._id;
-  const admin = await User.findById(adminId);
-  if (!admin) {
+  const uAdminId = req.user._id;
+  const uAdmin = await User.findById(uAdminId);
+  if (!uAdmin) {
     return next(new ErrorHandler('User not found', 404));
   }
 
@@ -160,40 +230,36 @@ module.exports.approveWithdraw = asyncErrorHandler(async (req, res, next) => {
     return next(new ErrorHandler('Withdraw not found', 404));
   }
 
+  console.log(withdraw);
+
   withdraw.status = 'approved';
   withdraw.approvedAt = Date.now();
-  withdraw.approvedBy = admin._id;
-  withdraw.approvedByName = admin.userName;
+  withdraw.approvedBy = uAdmin._id;
+  withdraw.approvedByName = uAdmin.username;
   withdraw.approvedAccountNumber = approvedAccountNumber;
   withdraw.approveTnxId = approveTnxId;
   await withdraw.save();
 
   // find user
-  // const user = await User.findById(withdraw.userId);
-  // if (!user) {
-  //   return next(new ErrorHandler('User not found', 404));
-  // }
+  const user = await User.findById(withdraw.userId);
+  if (!user) {
+    return next(new ErrorHandler('User not found', 404));
+  }
 
-  // user.withdrawCount += 1;
-  // await user.save();
+  user.withdraw.total += withdraw.amount;
+  user.withdraw.lastWithdraw = withdraw.amount;
+  user.withdraw.lastWithdrawDate = Date.now();
+  await user.save();
 
-  // // find sponsor
-  // const sponsor = await User.findById(user.sponsorBy);
-  // if (!sponsor) {
-  //   return next(new ErrorHandler('Sponsor not found', 404));
-  // }
-
-  // update sponsor balance
-  // sponsor.incomeBalance += withdraw.netAmount * 0.05;
-  // sponsor.royaltyBonus += withdraw.netAmount * 0.05;
-  // createTransaction(
-  //   sponsor._id,
-  //   'cashIn',
-  //   withdraw.netAmount * 0.05,
-  //   `Royalty Bonus`
-  // );
-  // await sponsor.save();
-  // console.log('sponsor', sponsor.userName);
+  // find admin by adminId
+  const admin = await Admin.findById(adminId);
+  console.log(admin.totalApprovedWithdraw.amount);
+  // update admin withdraw
+  admin.totalPendingWithdraw.amount -= withdraw.amount;
+  admin.totalPendingWithdraw.count -= 1;
+  admin.totalApprovedWithdraw.amount += withdraw.amount;
+  admin.totalApprovedWithdraw.count += 1;
+  await admin.save();
 
   res.status(200).json({
     success: true,
@@ -311,9 +377,9 @@ module.exports.cancelWithdraw = asyncErrorHandler(async (req, res, next) => {
   const { withdrawId, description } = req.body;
 
   //check user role admin and agent
-  const adminId = req.user._id;
-  const admin = await User.findById(adminId);
-  if (!admin) {
+  const uAdminId = req.user._id;
+  const uAdmin = await User.findById(uAdminId);
+  if (!uAdmin) {
     return next(new ErrorHandler('User not found', 404));
   }
 
@@ -328,9 +394,12 @@ module.exports.cancelWithdraw = asyncErrorHandler(async (req, res, next) => {
 
   withdraw.status = 'cancelled';
   withdraw.cancelledAt = Date.now();
-  withdraw.cancelledBy = admin._id;
-  withdraw.cancelledByName = admin.userName;
+  withdraw.cancelledBy = uAdmin._id;
+  withdraw.cancelledByName = uAdmin.username;
   withdraw.cancelDescription = description;
+  withdraw.cancelDescription = description
+    ? description
+    : 'Withdrawal rules have been violated';
   await withdraw.save();
 
   // find user
@@ -339,15 +408,24 @@ module.exports.cancelWithdraw = asyncErrorHandler(async (req, res, next) => {
     return next(new ErrorHandler('User not found', 404));
   }
 
-  // update user balance
-  user.incomeBalance += withdraw.amount;
+  user.activeBalance += withdraw.amount;
   createTransaction(
     user._id,
     'cashIn',
     withdraw.amount,
     `Withdraw Cancelled for ${description}`
   );
+  user.withdrawBalance += withdraw.amount;
+  user.currentProfit += withdraw.amount;
   await user.save();
+
+  // find admin by adminId
+  const admin = await Admin.findById(adminId);
+
+  // update admin withdraw
+  admin.totalPendingWithdraw.amount -= withdraw.amount;
+  admin.totalPendingWithdraw.count -= 1;
+  await admin.save();
 
   res.status(200).json({
     success: true,

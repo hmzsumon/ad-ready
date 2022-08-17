@@ -104,17 +104,9 @@ const Withdraw = () => {
 
   //==================Start Dialog1 Section =================
   const [open1, setOpen1] = React.useState(false);
-  const [method2, setMethod2] = React.useState('');
 
   const handleClose1 = () => {
     setOpen(false);
-  };
-  const confirmHandler = () => {
-    setOpen1(false);
-    setMethod2('');
-    setUserNumber('');
-
-    console.log(method2, userNumber);
   };
 
   //==================End Dialog1 Section =================
@@ -180,7 +172,7 @@ const Withdraw = () => {
         <div>
           <div>
             <NavLink
-              to='/deposit/history'
+              to='/withdraw/history'
               className=' my-6 bg-blue-500 text-white  font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150'
               type='button'
             >
@@ -199,11 +191,8 @@ const Withdraw = () => {
               open={open1}
               handleClose={handleClose1}
               handleDisAgree={handleDisAgree}
-              confirmHandler={confirmHandler}
               userNumber={userNumber}
               setUserNumber={setUserNumber}
-              method2={method2}
-              setMethod={setMethod2}
             />
           </div>
 
@@ -216,7 +205,7 @@ const Withdraw = () => {
                 Withdraw Amount{' '}
                 <span className=' text-xm font-medium'>
                   (Your Withdraw Balance is: BDT
-                  {user.withdrawBalance})
+                  {user && Number(user.withdrawBalance).toFixed(2)} )
                 </span>
               </label>
               <input
@@ -268,14 +257,13 @@ const Withdraw = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id='alert-dialog-description'>
-                  আপনি যদি এখনই উত্তোলন করতে চান তবে আপনি শুধুমাত্র মুনাফা আপনি
-                  যদি এখনই উত্তোলন করতে চান তবে আপনি শুধুমাত্র মুনাফা ব্যালেন্স
-                  উত্তোলন পারবেন এই ক্ষেত্রে ১০% চার্জ প্রযোজ্য সর্বনিম্ন ৫০০
-                  টাকা উত্তোলন করতে পারবেন। যদি ৩০ দিনের আগে সম্পূর্ণ ব্যালেন্স
-                  উত্তোলন করতে চান মুনাফা বেতিত শুদু মাত্র মেইন ব্যালেন্স
-                  উত্তোলন করতে পারবেন। এই ক্ষেত্রে ১০% চার্জ প্রযোজ্য এবং আপনার
-                  একাউন্ট সাসপেন্ড করা হবে। ২৪ ঘণ্টার মধ্যে আপনার টাকা আপনার
-                  প্রদত্ত পেমেন্ট মেথড আর মাধমে প্রদান করা হবে।
+                  আপনি যদি এখনই উত্তোলন করতে চান! তবে আপনি শুধুমাত্র মুনাফা
+                  ব্যালেন্স উত্তোলন করতে পারবেন এই ক্ষেত্রে ১০% চার্জ প্রযোজ্য
+                  সর্বনিম্ন ৫০০ টাকা উত্তোলন করতে পারবেন। যদি ৩০ দিনের আগে
+                  সম্পূর্ণ ব্যালেন্স উত্তোলন করতে চান মুনাফা বেতিত শুদু মাত্র
+                  মেইন ব্যালেন্স উত্তোলন করতে পারবেন। এই ক্ষেত্রে ১০% চার্জ
+                  প্রযোজ্য এবং আপনার একাউন্ট সাসপেন্ড করা হবে। ২৪ ঘণ্টার মধ্যে
+                  আপনার টাকা আপনার প্রদত্ত পেমেন্ট মেথড আর মাধমে প্রদান করা হবে।
                 </DialogContentText>
               </DialogContent>
               <DialogActions>

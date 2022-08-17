@@ -20,6 +20,7 @@ const UpdateProfile = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [gender, setGender] = useState('');
+  const [phone, setPhone] = useState('');
 
   const updateProfileHandler = (e) => {
     e.preventDefault();
@@ -28,6 +29,7 @@ const UpdateProfile = () => {
     formData.set('name', name);
     formData.set('email', email);
     formData.set('gender', gender);
+    formData.set('phone', phone);
 
     dispatch(updateProfile(formData));
   };
@@ -37,6 +39,7 @@ const UpdateProfile = () => {
       setName(user.name);
       setEmail(user.email);
       setGender(user.gender);
+      setPhone(user.phone);
     }
     if (error) {
       enqueueSnackbar(error, { variant: 'error' });

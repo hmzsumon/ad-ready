@@ -87,6 +87,10 @@ const WithdrawSchema = new Schema(
       type: String,
       default: 'Profit',
     },
+    cancelDescription: {
+      type: String,
+      default: 'Withdrawal rules have been violated.',
+    },
   },
   {
     timestamps: true,

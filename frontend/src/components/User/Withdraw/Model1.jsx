@@ -5,17 +5,42 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
-import React from 'react';
+import { useSnackbar } from 'notistack';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { activeBWRequest, clearErrors } from '../../../actions/withdrawAction';
 
-const Model1 = ({
-  open,
-  handleDisAgree,
-  confirmHandler,
-  method,
-  userNumber,
-  setMethod,
-  setUserNumber,
-}) => {
+const Model1 = ({ open, handleDisAgree }) => {
+  const { loading, error, isCreated } = useSelector((state) => state.activeBW);
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const dispatch = useDispatch();
+
+  const [method, setMethod] = useState('');
+  const [userNumber, setUserNumber] = useState('');
+
+  const handleConfirm = () => {
+    const myForm = new FormData();
+    myForm.set('method', method);
+    myForm.set('accountNumber', userNumber);
+
+    dispatch(activeBWRequest(myForm));
+  };
+  useEffect(() => {
+    if (error) {
+      enqueueSnackbar(error, { variant: 'error' });
+      dispatch(clearErrors());
+    }
+    if (isCreated) {
+      enqueueSnackbar('Your request has been sent successfully!', {
+        variant: 'success',
+      });
+      dispatch(clearErrors());
+      handleDisAgree();
+    }
+  }, [error, isCreated, enqueueSnackbar, dispatch, handleDisAgree]);
+
   return (
     <div>
       <Dialog
@@ -40,12 +65,13 @@ const Model1 = ({
             <TextField
               autoFocus
               margin='dense'
-              label='Method Number'
+              label='Method '
               type='text'
               value={method}
               fullWidth
               variant='standard'
               onChange={(e) => setMethod(e.target.value)}
+              required
             />
 
             <TextField
@@ -57,12 +83,13 @@ const Model1 = ({
               fullWidth
               variant='standard'
               onChange={(e) => setUserNumber(e.target.value)}
+              required
             />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDisAgree}>Disagree</Button>
-          <Button onClick={confirmHandler} autoFocus>
+          <Button onClick={handleConfirm} autoFocus>
             Confirm
           </Button>
         </DialogActions>
