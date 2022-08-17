@@ -429,6 +429,11 @@ exports.inactiveUserToActiveUser = asyncErrorHandler(async (req, res, next) => {
     );
   }
 
+  // user is already active
+  if (user.status === 'active' && user.isActive === true) {
+    return next(new ErrorHandler('User is already active', 400));
+  }
+
   // find admin by adminId
   const admin = await Admin.findById(adminId);
   console.log(adminId);
