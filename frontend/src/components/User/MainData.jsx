@@ -17,21 +17,21 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
+import { RevolvingDot } from 'react-loader-spinner';
 
 const MainData = () => {
-  const { enqueueSnackbar } = useSnackbar();
-  const dispatch = useDispatch();
-
-  const { user } = useSelector((state) => state.user);
-
+  const { user, loading } = useSelector((state) => state.user);
   const { isActivated, message, error } = useSelector(
     (state) => state.userActivate
   );
 
+  // console.log(data.user);
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch();
+
   // for dilog
   const [open, setOpen] = useState(false);
   const [taskLimit, setTaskLimit] = useState(0);
-  const [loading] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -61,6 +61,7 @@ const MainData = () => {
     if (isActivated) {
       enqueueSnackbar(message, { variant: 'success' });
       handleClose();
+      window.location.reload();
     }
   }, [isActivated, message, enqueueSnackbar, error, dispatch]);
 
@@ -74,154 +75,180 @@ const MainData = () => {
     <>
       <MetaData title=' Dashboard | Ad Ready' />
 
-      <div className='grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-6'>
-        {/* Active Section */}
-        {user.isActive === false && (
-          <div className='flex flex-col bg-yellow-600 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
-            <h4 className='text-gray-100 text-center font-medium'>
-              Your Account Inactive
-            </h4>
-            <small>Deposit a minimum of BDT 3000 to activate the account</small>
-            <div className='  text-center'>
-              <div className=' mx-auto'>
-                <Button
-                  variant='contained'
-                  onClick={handleClickOpen}
-                  disabled={user.mainBalance <= 2999}
-                >
-                  Active
-                </Button>
+      {loading ? (
+        <div className='flex text-center justify-center ml-20 mt-[200px]'>
+          <RevolvingDot
+            width='200'
+            color='orange'
+            ariaLabel='three-dots-loading'
+            wrapperStyle
+            wrapperClass
+          />
+        </div>
+      ) : (
+        <>
+          <div className='grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-6'>
+            {/* Active Section */}
+            {user.isActive === false && (
+              <div className='flex flex-col bg-yellow-600 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
+                <h4 className='text-gray-100 text-center font-medium'>
+                  Your Account Inactive
+                </h4>
+                <small>
+                  Deposit a minimum of BDT 3000 to activate the account
+                </small>
+                <div className='  text-center'>
+                  <div className=' mx-auto'>
+                    <Button
+                      variant='contained'
+                      onClick={handleClickOpen}
+                      disabled={user.mainBalance <= 2999}
+                    >
+                      Active
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {/*End Active Section */}
+
+            <div className='flex flex-col bg-purple-600 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
+              <h4 className='text-gray-100 font-medium'>Main Balance</h4>
+              <div className=' flex items-center'>
+                <span>
+                  <TbCurrencyTaka className=' text-2xl' />
+                </span>
+                <h2 className='text-2xl font-bold'>
+                  {user && user.mainBalance}{' '}
+                </h2>
               </div>
             </div>
-          </div>
-        )}
-        {/*End Active Section */}
+            <div className='flex flex-col bg-red-500 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
+              <h4 className='text-gray-100 font-medium'>
+                Active Balance <sup>3%+</sup>
+              </h4>
+              <div className=' flex items-center'>
+                <span>
+                  <TbCurrencyTaka className=' text-2xl' />
+                </span>
+                <h2 className='text-2xl font-bold'>
+                  {user &&
+                    user.activeBalance &&
+                    Number(user.activeBalance).toFixed(2)}{' '}
+                </h2>
+              </div>
+            </div>
+            <div className='flex flex-col bg-yellow-500 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
+              <h4 className='text-gray-100 font-medium'>
+                Withdraw Balance <sup>10%</sup>{' '}
+              </h4>
+              <div className=' flex items-center'>
+                <span>
+                  <TbCurrencyTaka className=' text-2xl' />
+                </span>
+                <h2 className='text-2xl font-bold'>
+                  {user &&
+                    user.withdrawBalance &&
+                    Number(user.withdrawBalance).toFixed(2)}{' '}
+                </h2>
+              </div>
+            </div>
+            <div className='flex flex-col bg-green-500 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
+              <h4 className='text-gray-100 font-medium'>Your Total Profit</h4>
 
-        <div className='flex flex-col bg-purple-600 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
-          <h4 className='text-gray-100 font-medium'>Main Balance</h4>
-          <div className=' flex items-center'>
-            <span>
-              <TbCurrencyTaka className=' text-2xl' />
-            </span>
-            <h2 className='text-2xl font-bold'>{user && user.mainBalance} </h2>
-          </div>
-        </div>
-        <div className='flex flex-col bg-red-500 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
-          <h4 className='text-gray-100 font-medium'>
-            Active Balance <sup>3%+</sup>
-          </h4>
-          <div className=' flex items-center'>
-            <span>
-              <TbCurrencyTaka className=' text-2xl' />
-            </span>
-            <h2 className='text-2xl font-bold'>
-              {user &&
-                user.activeBalance &&
-                Number(user.activeBalance).toFixed(2)}{' '}
-            </h2>
-          </div>
-        </div>
-        <div className='flex flex-col bg-yellow-500 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
-          <h4 className='text-gray-100 font-medium'>
-            Withdraw Balance <sup>10%</sup>{' '}
-          </h4>
-          <div className=' flex items-center'>
-            <span>
-              <TbCurrencyTaka className=' text-2xl' />
-            </span>
-            <h2 className='text-2xl font-bold'>
-              {user &&
-                user.withdrawBalance &&
-                Number(user.withdrawBalance).toFixed(2)}{' '}
-            </h2>
-          </div>
-        </div>
-        <div className='flex flex-col bg-green-500 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
-          <h4 className='text-gray-100 font-medium'>Your Total Profit</h4>
+              <div className=' flex items-center'>
+                <span>
+                  <TbCurrencyTaka className=' text-2xl' />
+                </span>
+                <h2 className='text-2xl font-bold'>
+                  {user && user.profit && Number(user.profit).toFixed(2)}{' '}
+                </h2>
+              </div>
+            </div>
 
-          <div className=' flex items-center'>
-            <span>
-              <TbCurrencyTaka className=' text-2xl' />
-            </span>
-            <h2 className='text-2xl font-bold'>
-              {user && user.profit && Number(user.profit).toFixed(2)}{' '}
-            </h2>
+            {/* Start Daily vew */}
+            <div className='flex flex-col bg-green-500 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
+              <h4 className='text-gray-100 font-medium'>Each Day Profit</h4>
+
+              <div className=' flex items-center'>
+                <span>
+                  <TbCurrencyTaka className=' text-2xl' />
+                </span>
+                <h2 className='text-2xl font-bold'>
+                  {user &&
+                    user.dailyProfit &&
+                    Number(user.dailyProfit).toFixed(2)}{' '}
+                </h2>
+              </div>
+            </div>
+            {/* End Daily vew */}
+
+            {/* Start Daily vew */}
+            <div className='flex flex-col bg-blue-700 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
+              <h4 className='text-gray-100 font-medium'>Each Day Task</h4>
+
+              <div className=' flex items-center'>
+                <h2 className='text-2xl font-bold'>
+                  {user && user.taskLimit}{' '}
+                  <sup>
+                    {user &&
+                      user.taskValue &&
+                      Number(user.taskValue).toFixed(2)}
+                  </sup>{' '}
+                </h2>
+              </div>
+            </div>
+            {/* End Daily vew */}
+
+            {/* Start Daily Profit */}
+            <div className='flex flex-col bg-yellow-600 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
+              <h4 className='text-gray-100 font-medium'>To Day Profit</h4>
+
+              <div className=' flex items-center'>
+                <span>
+                  <TbCurrencyTaka className=' text-2xl' />
+                </span>
+                <h2 className='text-2xl font-bold'>
+                  {user && Number(user.toDayProfit).toFixed(2)}{' '}
+                </h2>
+              </div>
+            </div>
+            {/* End Daily Profit */}
           </div>
-        </div>
-
-        {/* Start Daily vew */}
-        <div className='flex flex-col bg-green-500 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
-          <h4 className='text-gray-100 font-medium'>Each Day Profit</h4>
-
-          <div className=' flex items-center'>
-            <span>
-              <TbCurrencyTaka className=' text-2xl' />
-            </span>
-            <h2 className='text-2xl font-bold'>
-              {user && user.dailyProfit && Number(user.dailyProfit).toFixed(2)}{' '}
-            </h2>
-          </div>
-        </div>
-        {/* End Daily vew */}
-
-        {/* Start Daily vew */}
-        <div className='flex flex-col bg-blue-700 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
-          <h4 className='text-gray-100 font-medium'>Each Day Task</h4>
-
-          <div className=' flex items-center'>
-            <h2 className='text-2xl font-bold'>
-              {user && user.taskLimit}{' '}
-              <sup>
-                {user && user.taskValue && Number(user.taskValue).toFixed(2)}
-              </sup>{' '}
-            </h2>
-          </div>
-        </div>
-        {/* End Daily vew */}
-
-        {/* Start Daily Profit */}
-        <div className='flex flex-col bg-yellow-600 text-white gap-2 rounded-xl shadow-lg hover:shadow-xl p-6'>
-          <h4 className='text-gray-100 font-medium'>To Day Profit</h4>
-
-          <div className=' flex items-center'>
-            <span>
-              <TbCurrencyTaka className=' text-2xl' />
-            </span>
-            <h2 className='text-2xl font-bold'>
-              {user && Number(user.toDayProfit).toFixed(2)}{' '}
-            </h2>
-          </div>
-        </div>
-        {/* End Daily Profit */}
-      </div>
-      {/* Model Section */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>
-          <small>আপনি প্রতিদিন কতগুলি কাজ সম্পূর্ণ করতে চান?</small>
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            মনে রাখবেন আপনাকে কমপক্ষে পাঁচটি কাজ করতে হবে এবং সর্বোচ্চটি আপনার
-            উপর নির্ভর করে
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin='dense'
-            id='name'
-            label=''
-            type='number'
-            fullWidth
-            variant='standard'
-            onChange={(e) => setTaskLimit(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleConfirm}>
-            {loading ? <PulseLoader color='#2B80D5' size={10} /> : 'Confirm'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+          {/* Model Section */}
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>
+              <small>আপনি প্রতিদিন কতগুলি কাজ সম্পূর্ণ করতে চান?</small>
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                মনে রাখবেন আপনাকে কমপক্ষে পাঁচটি কাজ করতে হবে এবং সর্বোচ্চটি
+                আপনার উপর নির্ভর করে
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin='dense'
+                id='name'
+                label=''
+                type='number'
+                fullWidth
+                variant='standard'
+                onChange={(e) => setTaskLimit(e.target.value)}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleConfirm}>
+                {loading ? (
+                  <PulseLoader color='#2B80D5' size={10} />
+                ) : (
+                  'Confirm'
+                )}
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </>
+      )}
     </>
   );
 };
