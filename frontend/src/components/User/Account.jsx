@@ -15,10 +15,10 @@ const Account = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const getLastName = () => {
-    const nameArray = user.name.split(' ');
-    return nameArray[nameArray.length - 1];
-  };
+  // const getLastName = () => {
+  //   const nameArray = user.name.split(' ');
+  //   return nameArray[nameArray.length - 1];
+  // };
 
   return (
     <>
