@@ -71,23 +71,11 @@ const ForgotPassword = () => {
 
                   {/* <!-- button container --> */}
                   <div className='flex flex-col gap-2.5 mt-2 mb-32'>
-                    <p className='text-xs text-primary-grey text-left'>
-                      By continuing, you agree to Flipkart's{' '}
-                      <a
-                        href='https://www.flipkart.com/pages/terms'
-                        className='text-primary-blue'
-                      >
-                        {' '}
-                        Terms of Use
-                      </a>{' '}
-                      and{' '}
-                      <a
-                        href='https://www.flipkart.com/pages/privacypolicy'
-                        className='text-primary-blue'
-                      >
-                        {' '}
-                        Privacy Policy.
-                      </a>
+                    <p class='text-xs text-primary-grey text-left'>
+                      By continuing, you agree to Ad Ready's{' '}
+                      <Link to='/condition' className='text-blue-500'>
+                        Terms of Service
+                      </Link>
                     </p>
                     <button
                       type='submit'
@@ -105,7 +93,7 @@ const ForgotPassword = () => {
                 to='/register'
                 className='font-medium text-sm text-primary-blue'
               >
-                New to Flipkart? Create an account
+                New to Ad Ready? Create an account
               </Link>
             </div>
             {/* <!-- edit info container --> */}

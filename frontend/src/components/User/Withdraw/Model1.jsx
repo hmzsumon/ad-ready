@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { activeBWRequest, clearErrors } from '../../../actions/withdrawAction';
 
 const Model1 = ({ open, handleDisAgree }) => {
-  const { loading, error, isCreated } = useSelector((state) => state.activeBW);
+  const { error, isCreated } = useSelector((state) => state.activeBW);
 
   const { enqueueSnackbar } = useSnackbar();
 

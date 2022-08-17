@@ -54,7 +54,7 @@ const ResetPassword = () => {
 
   return (
     <>
-      <MetaData title='Password Reset | Flipkart' />
+      <MetaData title='Password Reset | Ad Ready' />
 
       {loading && <BackdropLoader />}
       <main class='w-full mt-12 sm:pt-20 sm:mt-0'>
@@ -98,23 +98,12 @@ const ResetPassword = () => {
                   {/* <!-- button container --> */}
                   <div class='flex flex-col gap-2.5 mt-2 mb-32'>
                     <p class='text-xs text-primary-grey text-left'>
-                      By continuing, you agree to Flipkart's{' '}
-                      <a
-                        href='https://www.flipkart.com/pages/terms'
-                        class='text-primary-blue'
-                      >
-                        {' '}
-                        Terms of Use
-                      </a>{' '}
-                      and{' '}
-                      <a
-                        href='https://www.flipkart.com/pages/privacypolicy'
-                        class='text-primary-blue'
-                      >
-                        {' '}
-                        Privacy Policy.
-                      </a>
+                      By continuing, you agree to Ad Ready's{' '}
+                      <Link to='/condition' className='text-blue-500'>
+                        Terms of Service
+                      </Link>
                     </p>
+
                     <button
                       type='submit'
                       class='text-white py-3 w-full bg-primary-orange shadow hover:shadow-lg rounded-sm font-medium'
@@ -131,7 +120,7 @@ const ResetPassword = () => {
                 to='/register'
                 class='font-medium text-sm text-primary-blue'
               >
-                New to Flipkart? Create an account
+                New to Ad Ready? Create an account
               </Link>
             </div>
             {/* <!-- edit info container --> */}
