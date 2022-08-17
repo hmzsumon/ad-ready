@@ -455,6 +455,7 @@ exports.inactiveUserToActiveUser = asyncErrorHandler(async (req, res, next) => {
   const taskValue = dailyProfit / numTaskLimit;
 
   user.profit += cashBack;
+  user.currentProfit += cashBack;
   user.dailyProfit = dailyProfit;
   user.toDayProfit += cashBack;
   user.taskLimit = numTaskLimit;
@@ -479,8 +480,10 @@ exports.inactiveUserToActiveUser = asyncErrorHandler(async (req, res, next) => {
 
   sponsor.referBonus += referBonus;
   sponsor.profit += referBonus;
+  sponsor.currentProfit += referBonus;
   sponsor.toDayProfit += referBonus;
   sponsor.activeBalance += referBonus;
+  sponsor.withdrawBalance += referBonus;
   createTransaction(
     sponsor._id,
     'cashIn',
@@ -494,8 +497,11 @@ exports.inactiveUserToActiveUser = asyncErrorHandler(async (req, res, next) => {
   admin.activeUsers += 1;
   admin.activeBalance += user.activeBalance + referBonus + cashBack;
   admin.profit += referBonus + cashBack;
+  admin.currentProfit += referBonus + cashBack;
   admin.cashBack += cashBack;
   admin.referBonus += referBonus;
+  admin.withdrawBalance += referBonus + cashBack;
+  admin.toDayProfit += referBonus + cashBack;
   await admin.save();
   console.log(user.username, sponsor.username);
   res.status(200).json({

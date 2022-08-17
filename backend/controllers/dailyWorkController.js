@@ -171,7 +171,9 @@ module.exports.updateTasksLimit = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-// update user's tasksLimit by package tasksLimit
+//=====================================================
+// Give Task
+//=====================================================
 module.exports.givWorkToUsers = asyncErrorHandler(async (req, res, next) => {
   // incomebalance > 3000
   const users = await User.find({
@@ -187,15 +189,25 @@ module.exports.givWorkToUsers = asyncErrorHandler(async (req, res, next) => {
   for (let i = 0; i < users.length; i++) {
     const user = users[i];
 
-    //update user's tasksValue
-    user.usrTaskValue = Math.round(
-      (user.incomeBalance * 0.036) / user.packageTaskLimit
-    );
     // console.log('usrTaskValue', user.userName, user.usrTaskValue);
-    user.tasksLimit = user.packageTaskLimit;
+    user.dailyTaskLimit = user.taskLimit;
     user.isCompleted = false;
+    user.toDayProfit = 0;
     await user.save();
   }
+
+  // find admin by adminId
+  // find admin
+  const admin = await Admin.findById(adminId);
+  if (!admin) {
+    return next(new ErrorHandler('Admin not found', 404));
+  }
+
+  admin.toDayProfit = 0; // reset toDayProfit
+  admin.givTask = true;
+  admin.totalWorkDays += 1;
+  admin.todyWorkCompleted = 0; // reset todyWorkCompleted
+  await admin.save();
 
   res.status(200).json({
     success: true,
@@ -356,6 +368,9 @@ module.exports.getSingleTask = asyncErrorHandler(async (req, res, next) => {
 //====================================================================================
 
 module.exports.submitWork = asyncErrorHandler(async (req, res, next) => {
+  // find admin
+  const admin = await Admin.findById(adminId);
+
   const user = await User.findById(req.user._id);
   if (!user) {
     return next(new ErrorHandler('User not found', 404));
@@ -377,7 +392,7 @@ module.exports.submitWork = asyncErrorHandler(async (req, res, next) => {
   if (user.dailyTaskLimit > 0) {
     user.dailyTaskLimit = user.dailyTaskLimit - 1;
     // update user's dailyIncomeBalance
-    user.profit += user.taskValue;
+    user.currentProfit += user.taskValue;
     user.toDayProfit += user.taskValue;
     user.taskProfit += user.taskValue;
 
@@ -389,23 +404,29 @@ module.exports.submitWork = asyncErrorHandler(async (req, res, next) => {
       'daily_work'
     );
   }
-
+  console.log('B done', user.activeBalance);
   //check user isCompleted is true
   if (user.dailyTaskLimit === 0) {
-    console.log('user isCompleted');
+    user.profit += user.taskValue * user.taskLimit;
     user.isCompleted = true;
     user.totalWorkDays += 1;
     user.activeBalance += user.taskValue * user.taskLimit;
     user.withdrawBalance += user.taskValue * user.taskLimit;
 
+    // task value
+    const dailyProfit = user.activeBalance * admin.dailyProfit;
+    const taskValue = dailyProfit / user.taskLimit;
+    user.taskValue = taskValue;
+    user.dailyProfit = dailyProfit;
+
     // find sponsor of user
     const sponsor = await User.findById(user.sponsor.userId);
-    console.log('sponsor', sponsor.username);
     // sponsor  income 2%
     const sponsorIncome = user.taskValue * 0.02 * user.taskLimit;
-    console.log('sponsorIncome', sponsorIncome);
+
     // update sponsor's dailyIncomeBalance
     sponsor.profit += sponsorIncome;
+    sponsor.currentProfit += sponsorIncome;
     sponsor.toDayProfit += sponsorIncome;
     sponsor.activeBalance += sponsorIncome;
     sponsor.withdrawBalance += sponsorIncome;
@@ -418,10 +439,10 @@ module.exports.submitWork = asyncErrorHandler(async (req, res, next) => {
     );
     await sponsor.save();
 
-    // find admin
-    const admin = await Admin.findById(adminId);
     admin.profit += sponsorIncome + user.taskValue * user.taskLimit;
+    admin.currentProfit += sponsorIncome + user.taskValue * user.taskLimit;
     admin.activeBalance += sponsorIncome + user.taskValue * user.taskLimit;
+    admin.todyWorkCompleted += 1;
     await admin.save();
   }
   await user.save();

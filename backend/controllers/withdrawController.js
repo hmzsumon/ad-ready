@@ -6,25 +6,28 @@ const Admin = require('../models/Admin');
 const createTransaction = require('../utils/tnx');
 const adminId = process.env.ADMIN_ID;
 
-// withdraw request from user
+//=======================================================================
+//===================== withdraw request from user========================
 module.exports.withdrawRequest = asyncErrorHandler(async (req, res, next) => {
+  // find admin by adminId
+  const admin = await Admin.findById(adminId);
   const userId = req.user._id;
   const { amount, method, accountNumber } = req.body;
-
+  const numAmount = Number(amount);
   const user = await User.findById(userId);
   if (!user) {
     return next(new ErrorHandler('User not found', 404));
   }
 
-  // check if user has sufficient balance
-  if (user.activeBalance < amount) {
+  // check user withdrawBalance > 500
+  if (user.withdrawBalance < 500) {
     return next(new ErrorHandler('Insufficient balance', 400));
   }
 
-  // find admin by adminId
-  const admin = await Admin.findById(adminId);
-
-  const numAmount = Number(amount);
+  // check if user has sufficient balance
+  if (user.withdrawBalance < amount) {
+    return next(new ErrorHandler('Insufficient balance', 400));
+  }
 
   const withdrawCharge = numAmount * admin.withdrawCharge;
 
@@ -44,13 +47,18 @@ module.exports.withdrawRequest = asyncErrorHandler(async (req, res, next) => {
     method,
     status: 'pending',
     numberOfWithdraw: user.withdraw.numberOfWithdraw + 1,
+    remainingBalance: user.activeBalance - netAmount,
   });
   // update user balance
   user.activeBalance -= numAmount;
   createTransaction(userId, 'cashOut', numAmount, 'withdraw request');
+  user.withdrawBalance -= numAmount;
+  user.currentProfit -= numAmount;
   user.withdraw.numberOfWithdraw += 1;
   user.withdraw.total += numAmount;
   user.withdraw.lastWithdraw = numAmount;
+  user.withdraw.lastWithdrawDate = Date.now();
+
   //user.status = 'suspended';
   await user.save();
 

@@ -42,6 +42,11 @@ const adminSchema = new mongoose.Schema(
       default: 0,
     },
 
+    currentProfit: {
+      type: Number,
+      default: 0,
+    },
+
     cashBack: {
       type: Number,
       default: 0,
@@ -155,10 +160,14 @@ const adminSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    todyWorkCompleted: {
+      type: Number,
+      default: 0,
+    },
 
-    isCompleted: {
-      type: Boolean,
-      default: false,
+    toDayProfit: {
+      type: Number,
+      default: 0,
     },
   },
   {

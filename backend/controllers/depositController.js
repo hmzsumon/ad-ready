@@ -119,6 +119,7 @@ exports.approvedDeposit = asyncErrorHandler(async (req, res, next) => {
   admin.totalPendingDeposit.count -= 1;
   admin.totalApprovedDeposit.amount += deposit.amount;
   admin.totalApprovedDeposit.count += 1;
+  admin.mainBalance += deposit.amount;
   await admin.save();
 
   res.status(200).json({

@@ -83,6 +83,10 @@ const WithdrawSchema = new Schema(
       type: Number,
       default: 0,
     },
+    balanceFrom: {
+      type: String,
+      default: 'Profit',
+    },
   },
   {
     timestamps: true,

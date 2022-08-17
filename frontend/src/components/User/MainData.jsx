@@ -115,7 +115,9 @@ const MainData = () => {
               <TbCurrencyTaka className=' text-2xl' />
             </span>
             <h2 className='text-2xl font-bold'>
-              {user && user.activeBalance}{' '}
+              {user &&
+                user.activeBalance &&
+                Number(user.activeBalance).toFixed(2)}{' '}
             </h2>
           </div>
         </div>
@@ -128,7 +130,9 @@ const MainData = () => {
               <TbCurrencyTaka className=' text-2xl' />
             </span>
             <h2 className='text-2xl font-bold'>
-              {user && user.withdrawBalance}{' '}
+              {user &&
+                user.withdrawBalance &&
+                Number(user.withdrawBalance).toFixed(2)}{' '}
             </h2>
           </div>
         </div>

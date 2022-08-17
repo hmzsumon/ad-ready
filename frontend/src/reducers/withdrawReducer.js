@@ -45,6 +45,7 @@ export const withdrawReducer = (
       return {
         ...state,
         error: null,
+        isCreated: false,
       };
     default:
       return state;
